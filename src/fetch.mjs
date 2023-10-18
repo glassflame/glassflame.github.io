@@ -8,10 +8,10 @@ export class UnknownFileKindError extends Error {}
  * Try to determine the {@link VaultFile.kind} from a file's extension.
  *
  * @param extension {string} The file's extension, with no leading colon.
- * @returns {"card"|"canvas"} The successfully determined file type.
+ * @returns {"page"|"canvas"} The successfully determined file type.
  */
 function kindFromExtension(extension) {
-    if(extension === "md") return "card"
+    if(extension === "md") return "page"
     else if(extension === ".canvas") return "canvas"
     throw UnknownFileKindError("No file type matched the given file extension.")
 }
@@ -23,16 +23,9 @@ export class VaultFile {
     /**
      * The type of file.
      *
-     * @type {"card"|"canvas"}
+     * @type {"page"|"canvas"}
      */
     kind
-
-    /**
-     * The name of the file.
-     *
-     * @type {string}
-     */
-    name
 
     /**
      * The contents of the file.
@@ -43,9 +36,8 @@ export class VaultFile {
      */
     contents
 
-    constructor({ kind, name, contents }) {
+    constructor({ kind, contents }) {
         this.kind = kind
-        this.name = name
         this.contents = contents
     }
 }
@@ -65,6 +57,17 @@ export class VaultFetchError extends Error {
     }
 }
 
+
+/**
+ * Get the name of a file from its {@link URL}.
+ *
+ * @param fileURL {URL} The URL to read.
+ * @returns {string} The name of the file.
+ */
+export function nameFromFileURL(fileURL) {
+    return decodeURIComponent(fileURL.pathname.split("/").at(-1).split(".").slice(0, -1).join("."))
+}
+
 /**
  * Fetch a {@link VaultFile} from the given {@link URL}.
  *
@@ -78,9 +81,8 @@ async function fetchVaultFile(fileURL) {
 
     const contents = await response.text()
     const kind = kindFromExtension(fileURL.pathname.split(".").at(-1))
-    const name = decodeURIComponent(fileURL.pathname.split("/").at(-1).split(".").slice(0, -1).join("."))
 
-    return new VaultFile({kind, name, contents})
+    return new VaultFile({kind, contents})
 }
 
 /**

@@ -1,0 +1,30 @@
+<html lang="">
+	<head>
+		<meta charset="utf-8" />
+		<title>Obsiview</title>
+		<link rel="stylesheet" href="style/index.css">
+		<script type="module" src="src/index.mjs"></script>
+	</head>
+	<body>
+		<template id="template-card">
+			<style>
+				.card {
+					border-style: solid;
+					border-width: 2px;
+					border-radius: 4px;
+				}
+			</style>
+			<div class="card">
+				<h1>
+					<slot name="card-name">Card name</slot>
+				</h1>
+				<div>
+					<slot name="card-contents">Card contents</slot>
+				</div>
+			</div>
+		</template>
+		<x-card href="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/8%20-%20Sistemi%20complessi/1%20-%20Sistemi%20dinamici/convezione%20di%20Rayleigh-B%C3%A9nard.md"></x-card>
+		<x-card href="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/8 - Sistemi complessi/1 - Sistemi dinamici/condizione iniziale.md"></x-card>
+		<x-card href="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/8%20-%20Sistemi%20complessi/1%20-%20Sistemi%20dinamici/metastabilit%C3%A0.md"></x-card>
+	</body>
+</html>
