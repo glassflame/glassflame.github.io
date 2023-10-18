@@ -1,19 +1,19 @@
 /**
- * No valid kind was determined during the execution of {@link kindFromName}.
+ * No valid kind was determined during the execution of {@link kindFromExtension}.
  */
 export class UnknownFileKindError extends Error {}
 
 
 /**
- * Try to determine the {@link VaultFile.kind} from a file's name.
+ * Try to determine the {@link VaultFile.kind} from a file's extension.
  *
- * @param name {string} The file name to use.
+ * @param extension {string} The file's extension, with no leading colon.
  * @returns {"card"|"canvas"} The successfully determined file type.
  */
-function kindFromName(name) {
-    if(name.endsWith(".md")) return "card"
-    else if(name.endsWith(".canvas")) return "canvas"
-    throw UnknownFileKindError("No file type matched the given file name.")
+function kindFromExtension(extension) {
+    if(extension === "md") return "card"
+    else if(extension === ".canvas") return "canvas"
+    throw UnknownFileKindError("No file type matched the given file extension.")
 }
 
 /**
@@ -77,8 +77,8 @@ async function fetchVaultFile(fileURL) {
     if(!response.ok) throw new VaultFetchError(response, "Fetch response is not ok")
 
     const contents = await response.text()
-    const name = fileURL.pathname.split("/").at(-1)
-    const kind = kindFromName(name)
+    const kind = kindFromExtension(fileURL.pathname.split(".").at(-1))
+    const name = decodeURIComponent(fileURL.pathname.split("/").at(-1).split(".").slice(0, -1).join("."))
 
     return new VaultFile({kind, name, contents})
 }
@@ -101,7 +101,7 @@ export async function getVaultFile(fileURL) {
 
     if(cached !== undefined) return cached
 
-    const vaultFile = fetchVaultFile(fileURL)
+    const vaultFile = await fetchVaultFile(fileURL)
     VAULT_CACHE[fileURL] = vaultFile
     return vaultFile
 }
