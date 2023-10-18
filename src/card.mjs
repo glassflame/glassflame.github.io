@@ -1,27 +1,25 @@
 import {nameFromFileURL, getVaultFile} from "./fetch.mjs";
+import {parsePageContents} from "./page.mjs";
 
 
 export class CardElement extends HTMLElement {
     /**
-     * A reference to the element itself.
-     *
-     * @type {HTMLElement}
+     * The element containing the card's name.
      */
-    self
+    nameElement
 
-    constructor() {
-        // noinspection UnnecessaryLocalVariableJS
-        const self = super()
-        this.self = self
-    }
+    /**
+     * The element containing the card's contents.
+     */
+    contentsElement
 
     /**
      * Get the {@link URL} this card is available at via the `href` attribute.
      *
      * @returns {URL} The URL in question.
      */
-    href() {
-        return new URL(this.self.getAttribute("href"))
+    getCardHref() {
+        return new URL(this.getAttribute("href"))
     }
 
     /**
@@ -29,16 +27,8 @@ export class CardElement extends HTMLElement {
      *
      * @returns {string} The name in question.
      */
-    name() {
-        return nameFromFileURL(this.href())
-    }
-
-    /**
-     * Get the card's {@link VaultFile} via the `href` attribute.
-     */
-    async file() {
-        // noinspection ES6RedundantAwait
-        return await getVaultFile(this.href())
+    getCardName() {
+        return nameFromFileURL(this.getCardHref())
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -46,13 +36,58 @@ export class CardElement extends HTMLElement {
         const templateElement = document.getElementById("template-card")
         const instanceElement = templateElement.content.cloneNode(true)
 
-        const nameElement = document.createElement("span")
-        nameElement.setAttribute("slot", "card-name")
-        nameElement.innerText = this.name()
+        this.nameElement = document.createElement("span")
+        this.nameElement.setAttribute("slot", "card-name")
+        this.nameElement.innerText = this.getCardName()
 
-        this.self.appendChild(nameElement)
+        this.contentsElement = document.createElement("div")
+        this.contentsElement.setAttribute("slot", "card-contents")
+
+        this.appendChild(this.nameElement)
+        this.appendChild(this.contentsElement)
 
         const shadow = this.attachShadow({ mode: "open" })
         shadow.appendChild(instanceElement)
+
+        this.loadContents()
+    }
+
+    /**
+     * Get the card's {@link VaultFile} via the `href` attribute.
+     *
+     * @returns {Promise<VaultFile>} The VaultFile.
+     */
+    async getCardVaultFile() {
+        // noinspection ES6RedundantAwait
+        return await getVaultFile(this.getCardHref())
+    }
+
+    /**
+     * Get the card's contents rendered in HTML.
+     *
+     * @returns {Promise<String>} The unsanitized HTML.
+     */
+    async getCardContents() {
+        const file = await this.getCardVaultFile()
+        switch(file.kind) {
+            case "page":
+                const parsed = parsePageContents(file.contents)
+                return parsed
+            case "canvas":
+                // TODO
+                return "TODO"
+            default:
+                return ""
+        }
+    }
+
+    /**
+     * Load the card's contents.
+     *
+     * @returns {Promise<void>} Nothing.
+     */
+    async loadContents() {
+        const contents = await this.getCardContents()
+        this.contentsElement.innerHTML = contents
     }
 }

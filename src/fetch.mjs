@@ -75,6 +75,7 @@ export function nameFromFileURL(fileURL) {
  * @returns {VaultFile} The fetched {@link VaultFile}.
  */
 async function fetchVaultFile(fileURL) {
+    console.info("Fetching", fileURL.href, "...")
     const response = await fetch(fileURL, {})
 
     if(!response.ok) throw new VaultFetchError(response, "Fetch response is not ok")

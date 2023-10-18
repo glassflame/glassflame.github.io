@@ -1,0 +1,43 @@
+import {Marked} from "https://unpkg.com/marked@9.1.2/lib/marked.esm.js"
+
+/**
+ * The {@link Marked} instance to use for parsing page contents.
+ *
+ * @type {Marked}
+ */
+const marked = new Marked({
+    extensions: [
+        {
+            name: "wikilink",
+            level: "inline",
+            start(src) {
+                return src.match(/^\[\[/)?.index
+            },
+            tokenizer(src, tokens) {
+                const match = src.match(/^\[\[([^|\]]+)(?:\|([^\]]+))?]]/)
+                console.debug("Is this a wikilink?", src, tokens, match)
+                if(match) {
+                    return {
+                        type: "wikilink",
+                        raw: match[0],
+                        target: match[1],
+                        display: match[2],
+                    }
+                }
+            },
+            renderer(token) {
+                return `<abbr title="${token.target}">${token.display ?? token.target}</abbr>`
+            },
+        }
+    ]
+})
+
+/**
+ * Parse the given text string as Markdown using {@link marked}, emitting HTML.
+ *
+ * @param contents The text string to parsed.
+ * @returns {String} The resulting HTML.
+ */
+export function parsePageContents(contents) {
+    return marked.parse(contents)
+}
