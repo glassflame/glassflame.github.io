@@ -15,7 +15,6 @@ const marked = new Marked({
             },
             tokenizer(src, tokens) {
                 const match = src.match(/^\[\[([^|\]]+)(?:\|([^\]]+))?]]/)
-                console.debug("Is this a wikilink?", src, tokens, match)
                 if(match) {
                     return {
                         type: "wikilink",
@@ -28,6 +27,26 @@ const marked = new Marked({
             renderer(token) {
                 return `<abbr title="${token.target}">${token.display ?? token.target}</abbr>`
             },
+        },
+        {
+            name: "hashtag",
+            level: "inline",
+            start(src) {
+                return src.match(/^#/)?.index
+            },
+            tokenizer(src, tokens) {
+                const match = src.match(/^#([A-Za-z0-9]+)/)
+                if(match) {
+                    return {
+                        type: "hashtag",
+                        raw: match[0],
+                        tag: match[1],
+                    }
+                }
+            },
+            renderer(token) {
+                return `<abbr title="#${token.tag}">#${token.tag}</abbr>`
+            }
         }
     ]
 })
