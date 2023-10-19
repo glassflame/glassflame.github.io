@@ -1,7 +1,1 @@
-@import "./light.css";
-@import "./dark.css";
 
-body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-}

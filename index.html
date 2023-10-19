@@ -4,7 +4,15 @@
 		<meta charset="utf-8" />
 		<title>WIP: Obsiview</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="style/index.css">
+		<style>
+			@import "style/light.css";
+			@import "style/dark.css";
+
+			body {
+				background-color: var(--color-background);
+				color: var(--color-foreground);
+			}
+		</style>
 		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 		<script type="module" src="src/index.mjs"></script>
 	</head>
@@ -27,8 +35,25 @@
 				</div>
 			</div>
 		</template>
+		<template id="template-wikilink">
+			<style>
+				.wikilink {
+					text-decoration: underline 1px solid var(--color-accent);
+				}
+			</style>
+			<abbr class="wikilink"><slot name="wikilink-text">Wikilink text</slot></abbr>
+		</template>
+		<template id="template-hashtag">
+			<style>
+				.hashtag {
+					background-color: rgba(var(--color-accent), 0.2);
+					color: rgb(var(--color-accent))
+				}
+			</style>
+			<span class="hashtag"><slot name="hashtag-text">#Hashtag</slot></span>
+		</template>
 		<x-card href="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/8%20-%20Sistemi%20complessi/1%20-%20Sistemi%20dinamici/convezione%20di%20Rayleigh-B%C3%A9nard.md"></x-card>
-		<x-card href="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/8 - Sistemi complessi/1 - Sistemi dinamici/condizione iniziale.md"></x-card>
+		<x-card href="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/8%20-%20Sistemi%20complessi/1%20-%20Sistemi%20dinamici/condizione%20iniziale.md"></x-card>
 		<x-card href="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/8%20-%20Sistemi%20complessi/1%20-%20Sistemi%20dinamici/metastabilit%C3%A0.md"></x-card>
 	</body>
 </html>

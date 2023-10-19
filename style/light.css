@@ -1,6 +1,7 @@
 @media (prefers-color-scheme: light) {
     :root {
-        --color-background: #FFFFFF;
-        --color-foreground: #1E1E1E;
+        --color-background: #ffffff;
+        --color-foreground: #1e1e1e;
+        --color-accent: #ff7f00;
     }
 }

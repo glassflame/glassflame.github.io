@@ -19,13 +19,13 @@ const marked = new Marked({
                     return {
                         type: "wikilink",
                         raw: match[0],
-                        target: match[1],
-                        display: match[2],
+                        wref: match[1],
+                        text: match[2],
                     }
                 }
             },
             renderer(token) {
-                return `<abbr title="${token.target}">${token.display ?? token.target}</abbr>`
+                return `<x-wikilink wref="${token.wref}"><span slot="wikilink-text">${token.text ?? token.wref}</span></x-wikilink>`
             },
         },
         {
@@ -45,7 +45,7 @@ const marked = new Marked({
                 }
             },
             renderer(token) {
-                return `<abbr title="#${token.tag}">#${token.tag}</abbr>`
+                return `<x-hashtag><span slot="hashtag-text">#${token.tag}</span></x-hashtag>`
             }
         }
     ]
