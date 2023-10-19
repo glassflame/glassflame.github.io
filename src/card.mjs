@@ -1,5 +1,4 @@
 import {nameFromFileURL, getVaultFile} from "./fetch.mjs";
-import {parsePageContents} from "./page.mjs";
 
 
 export class CardElement extends HTMLElement {
@@ -12,6 +11,11 @@ export class CardElement extends HTMLElement {
      * The element containing the card's contents.
      */
     contentsElement
+
+    /**
+     * The element consisting of a button which requests the load of the card.
+     */
+    loadElement
 
     /**
      * Get the {@link URL} this card is available at via the `href` attribute.
@@ -43,13 +47,16 @@ export class CardElement extends HTMLElement {
         this.contentsElement = document.createElement("div")
         this.contentsElement.setAttribute("slot", "card-contents")
 
+        this.loadElement = document.createElement("button")
+        this.loadElement.innerText = "Load"
+        this.loadElement.addEventListener("click", () => this.loadContents())
+
+        this.contentsElement.appendChild(this.loadElement)
         this.appendChild(this.nameElement)
         this.appendChild(this.contentsElement)
 
         const shadow = this.attachShadow({ mode: "open" })
         shadow.appendChild(instanceElement)
-
-        this.loadContents()
     }
 
     /**
@@ -71,11 +78,9 @@ export class CardElement extends HTMLElement {
         const file = await this.getCardVaultFile()
         switch(file.kind) {
             case "page":
-                const parsed = parsePageContents(file.contents)
-                return parsed
+                return `<x-page markdown="${file.contents}"></x-page>`
             case "canvas":
-                // TODO
-                return "TODO"
+                return `<x-canvas json="${file.contents}"></x-canvas>"`
             default:
                 return ""
         }
@@ -87,7 +92,10 @@ export class CardElement extends HTMLElement {
      * @returns {Promise<void>} Nothing.
      */
     async loadContents() {
+        this.loadElement.disable()
         const contents = await this.getCardContents()
+
+        this.loadElement.removeEventListener("click")
         this.contentsElement.innerHTML = contents
     }
 }
