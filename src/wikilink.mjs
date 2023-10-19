@@ -17,11 +17,12 @@ export class WikilinkElement extends HTMLElement {
         const templateElement = document.getElementById("template-wikilink")
         const instanceElement = templateElement.content.cloneNode(true)
 
-        this.anchorElement = this.querySelector(".wikilink")
+        const wref = this.getWikilinkWref()
 
-        this.title = this.getWikilinkWref()
-
-
+        this.anchorElement = this.querySelector('[slot="wikilink-text"]')
+        this.anchorElement.addEventListener("click", function() {
+            console.warn("Would move to", wref, "but navigation is not yet implemented.")
+        })
 
         const shadow = this.attachShadow({ mode: "open" })
         shadow.appendChild(instanceElement)
