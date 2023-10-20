@@ -1,7 +1,7 @@
-import {CardElement} from "./card.mjs"
-import {WikilinkElement} from "./elements/wikilink.mjs";
-import {HashtagElement} from "./elements/hashtag.mjs";
+import { CanvasElement, HashtagElement, MarkdownElement, NodeFileElement, WikilinkElement } from "./elements/index.mjs";
 
-customElements.define("x-card", CardElement)
+customElements.define("x-node-file", NodeFileElement)
+customElements.define("x-markdown", MarkdownElement)
 customElements.define("x-wikilink", WikilinkElement)
 customElements.define("x-hashtag", HashtagElement)
+customElements.define("x-canvas", CanvasElement)
