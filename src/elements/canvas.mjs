@@ -27,7 +27,8 @@ export class CanvasElement extends HTMLElement {
 
     parsedJSON
 
-    contentsSlotted
+    nodesSlotted
+    edgesSlotted
     nodeElements = {}
     edgeElements = {}
 
@@ -38,8 +39,11 @@ export class CanvasElement extends HTMLElement {
 
         this.parsedJSON = JSON.parse(this.getAttribute("contents"))
 
-        this.contentsSlotted = document.createElement("div")
-        this.contentsSlotted.slot = "canvas-contents"
+        this.nodesSlotted = document.createElement("div")
+        this.nodesSlotted.slot = "canvas-nodes"
+
+        this.edgesSlotted = document.createElement("div")
+        this.edgesSlotted.slot = "canvas-edges"
 
         let minX = { x: Infinity, width: 0 }
         let minY = { y: Infinity, height: 0 }
@@ -61,7 +65,7 @@ export class CanvasElement extends HTMLElement {
             element.setAttribute("y", node["y"] - minY["y"])
             element.setAttribute("width", node["width"])
             element.setAttribute("height", node["height"])
-            element.setAttribute("color", node["color"])
+            if(node["color"]) element.setAttribute("color", node["color"])
 
             switch(node["type"]) {
                 case "text":
@@ -83,7 +87,7 @@ export class CanvasElement extends HTMLElement {
             }
 
             this.nodeElements[node["id"]] = element
-            this.contentsSlotted.appendChild(element)
+            this.nodesSlotted.appendChild(element)
         }
 
         for(const edge of this.parsedJSON["edges"]) {
@@ -93,19 +97,27 @@ export class CanvasElement extends HTMLElement {
             element.setAttribute("node-from-side", edge["fromSide"])
             element.setAttribute("node-to", edge["toNode"])
             element.setAttribute("node-to-side", edge["toSide"])
-            element.setAttribute("color", edge["color"])
-            element.setAttribute("arrows", edge["toEnd"])
+            if(edge["color"]) element.setAttribute("color", edge["color"])
+            if(edge["arrows"]) element.setAttribute("arrows", edge["toEnd"])
 
             this.edgeElements[edge["id"]] = element
-            this.contentsSlotted.appendChild(element)
+            this.edgesSlotted.appendChild(element)
         }
 
-        console.log(Object.values(this.nodeElements))
+        this.nodesSlotted.style["position"] = "relative"
+        this.nodesSlotted.style["left"] = "0"
+        this.nodesSlotted.style["top"] = "0"
+        this.nodesSlotted.style["width"] = `${maxX["x"] + maxX["width"] - minX["x"]}px`
+        this.nodesSlotted.style["height"] = `${maxY["y"] + maxY["height"] - minY["y"]}px`
 
-        this.contentsSlotted.style["width"] = `${maxX["x"] + maxX["width"] - minX["x"]}px`
-        this.contentsSlotted.style["height"] = `${maxY["y"] + maxY["height"] - minY["y"]}px`
+        this.edgesSlotted.style["position"] = "absolute"
+        this.edgesSlotted.style["left"] = "0"
+        this.edgesSlotted.style["top"] = "0"
+        this.edgesSlotted.style["width"] = `${maxX["x"] + maxX["width"] - minX["x"]}px`
+        this.edgesSlotted.style["height"] = `${maxY["y"] + maxY["height"] - minY["y"]}px`
 
-        this.appendChild(this.contentsSlotted)
+        this.appendChild(this.nodesSlotted)
+        this.appendChild(this.edgesSlotted)
 
         shadow.appendChild(instanceDocument)
     }
@@ -119,15 +131,16 @@ export class CanvasItemElement extends HTMLElement {
     colorToHex() {
         const color = this.getAttribute("color")
 
-        if(color?.startsWith("#")) {
+        if(color === undefined || color === null || color === "") {
+            return "var(--color-gray)"
+        }
+        else if(color.startsWith("#")) {
             // This is an hex color
             return color
         }
         else {
             // TODO: Check which colors correspond to what
             return {
-                [undefined]: "var(--color-gray)",
-                "undefined": "var(--color-gray)",
                 "0": "var(--color-gray)",
                 "1": "var(--color-red)",
                 "2": "var(--color-orange)",

@@ -27,8 +27,12 @@
 			}
 
 			body {
-				margin: 0;
+				padding: 128px;
+				width: max-content;
+				height: max-content;
 
+				background-image: linear-gradient(var(--color-foreground)) var(--color-gray) url("./media/tile.png");
+				background-blend-mode: normal, multiply, normal;
 				background-color: var(--color-background);
 				color: var(--color-foreground);
 			}
@@ -76,7 +80,6 @@
 				<aside class="node-group-label">
 					<h1><slot name="node-label">{Group label}</slot></h1>
 				</aside>
-				<slot name="node-contents">{Node contents}</slot>
 			</section>
 		</template>
 		<template id="template-node-file">
@@ -129,7 +132,20 @@
 			<slot name="markdown-contents">{Markdown text}</slot>
 		</template>
 		<template id="template-canvas">
-			<slot name="canvas-contents">{Canvas}</slot>
+			<style>
+				.canvas {
+					position: relative;
+
+					display: flex;
+
+					width: max-content;
+					height: max-content;
+				}
+			</style>
+			<div class="canvas">
+				<slot name="canvas-nodes">{Canvas nodes}</slot>
+				<slot name="canvas-edges">{Canvas edges}</slot>
+			</div>
 		</template>
 		<template id="template-wikilink">
 			<style>
