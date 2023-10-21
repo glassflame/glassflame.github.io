@@ -8,6 +8,24 @@
 			@import "style/light.css";
 			@import "style/dark.css";
 
+			:root {
+				--color-background: #ffffff;
+				--color-foreground: #000000;
+				--color-accent: #ff7f00;
+
+				--color-gray: #7E7E7E;
+				--color-red: #FB464C;
+				--color-orange: #E9973F;
+				--color-yellow: #E0DE71;
+				--color-green: #44CF6E;
+				--color-blue: #53DFDD;
+				--color-purple: #A882FF;
+
+				--edge-width: 2px;
+				--node-group-border-width: 2px;
+				--node-file-border-width: 2px;
+			}
+
 			body {
 				margin: 0;
 
@@ -17,47 +35,101 @@
 		</style>
 		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 		<script type="module" src="src/index.mjs"></script>
-		<template id="template-node-file">
+		<template id="template-display">
+			<slot name="display-container"></slot>
+		</template>
+		<template id="template-node-group">
 			<style>
-				.node {
+				.node-group {
 					position: absolute;
 					box-sizing: border-box;
+
+					--color-node: var(--color-gray);
+					outline: var(--node-group-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
+					border-radius: 0 8px 8px 8px;
+					padding: 12px;
+
+					overflow-x: visible;
+					overflow-y: visible;
 				}
 
+				.node-group-label {
+					position: relative;
+					bottom: 14px;
+					left: -12px;
+					transform: translateY(-100%);
+
+					display: inline-block;
+
+					outline: var(--node-group-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
+					border-radius: 8px 8px 0 0;
+					padding: 12px;
+				}
+
+				.node-group-label h1 {
+					margin: 0;
+				}
+			</style>
+			<section class="node-group">
+				<aside class="node-group-label">
+					<h1><slot name="node-label">{Group label}</slot></h1>
+				</aside>
+				<slot name="node-contents">{Node contents}</slot>
+			</section>
+		</template>
+		<template id="template-node-file">
+			<style>
 				.node-file {
-					outline-width: 2px;
+					position: absolute;
+					box-sizing: border-box;
+
+					--color-node: var(--color-gray);
+					outline: var(--node-file-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
 					border-radius: 8px;
 					padding: 12px;
 
 					overflow-x: clip;
 					overflow-y: scroll;
 				}
-
-				.node-empty {
-					outline-style: dashed;
-				}
-
-				.node-full {
-					outline-style: solid;
-				}
 			</style>
-			<article class="node node-file">
+			<article class="node-file">
 				<h1>
-					<slot name="node-title">Node title</slot>
+					<slot name="node-title">{Node title}</slot>
 				</h1>
-				<slot name="node-contents">Node contents</slot>
+				<slot name="node-contents">{Node contents}</slot>
 			</article>
 		</template>
-		<template id="template-markdown">
-			<slot name="markdown-contents"></slot>
-		</template>
-		<template id="template-canvas">
+		<template id="template-node-text">
 			<style>
-				.canvas {
+				.node-text {
+					position: absolute;
+					box-sizing: border-box;
 
+					--color-node: var(--color-gray);
+					outline: var(--node-file-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
+					border-radius: 8px;
+					padding: 12px;
+
+					overflow-x: clip;
+					overflow-y: scroll;
 				}
 			</style>
-			<div class="canvas"></div>
+			<article class="node-text">
+				<slot name="node-contents">{Node contents}</slot>
+			</article>
+		</template>
+		<template id="template-edge">
+			<slot name="edge-svg">{Edge SVG}</slot>
+		</template>
+		<template id="template-markdown">
+			<slot name="markdown-contents">{Markdown text}</slot>
+		</template>
+		<template id="template-canvas">
+			<slot name="canvas-contents">{Canvas}</slot>
 		</template>
 		<template id="template-wikilink">
 			<style>
@@ -67,7 +139,7 @@
 					cursor: pointer;
 				}
 			</style>
-			<a class="wikilink"><slot name="wikilink-text">Wikilink text</slot></a>
+			<a class="wikilink"><slot name="wikilink-text">{Wikilink text}</slot></a>
 		</template>
 		<template id="template-hashtag">
 			<style>
@@ -76,10 +148,10 @@
 					color: var(--color-accent);
 				}
 			</style>
-			<span class="hashtag"><slot name="hashtag-text">#Hashtag</slot></span>
+			<span class="hashtag"><slot name="hashtag-text">{#Hashtag}</slot></span>
 		</template>
 	</head>
 	<body>
-		<x-canvas contents=""/>
+		<x-display root vref="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/" wref="8 - Crittografia applicata/1 - Concetti/3 - Casualità ed entropia/★ mappa concettuale.canvas"/>
 	</body>
 </html>
