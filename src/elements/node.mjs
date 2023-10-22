@@ -99,9 +99,13 @@ export class NodeFileElement extends NodeElement {
         this.instanceElement.style.setProperty("height", `${this.getAttribute("height")}px`)
         this.instanceElement.style.setProperty("--color-node", this.colorToHex())
 
-        this.nameSlotted = document.createElement("span")
+        this.nameSlotted = document.createElement("x-wikilink")
         this.nameSlotted.slot = "node-title"
-        this.nameSlotted.innerText = this.getAttribute("fileName")
+        this.nameSlotted.setAttribute("wref", this.getAttribute("file"))
+        const nameSlottedText = document.createElement("span")
+        nameSlottedText.slot = "wikilink-text"
+        nameSlottedText.innerText = this.getAttribute("file-name")
+        this.nameSlotted.appendChild(nameSlottedText)
         this.appendChild(this.nameSlotted)
 
         this.contentsSlotted = document.createElement(customElements.getName(DisplayElement))
@@ -140,6 +144,7 @@ export class NodeTextElement extends NodeElement {
         this.contentsSlotted = document.createElement("x-markdown")
         this.contentsSlotted.slot = "node-contents"
         this.contentsSlotted.setAttribute("contents", this.getAttribute("text"))
+        this.appendChild(this.contentsSlotted)
 
         shadow.appendChild(instanceDocument)
     }

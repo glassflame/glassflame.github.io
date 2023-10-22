@@ -1,4 +1,6 @@
 import { Marked } from "https://unpkg.com/marked@9.1.2/lib/marked.esm.js";
+import { fileDetails } from "../utils/file.mjs";
+import { DisplayElement } from "./display.mjs";
 
 
 /**
@@ -11,21 +13,21 @@ export class MarkdownElement extends HTMLElement {
                 name: "frontmatter",
                 level: "block",
                 start(src) {
-                    return src.match(/^---/)?.index
+                    return src.match(/^(-{3,})/)?.index
                 },
                 tokenizer(src, tokens) {
-                    const match = src.match(/^---(.+)?\n(.+)\n---\n/)
+                    const match = src.match(/^(-{3,})(.+)?\n((?:.+\n)*)\1\n/)
                     if(match) {
                         return {
                             type: "frontmatter",
                             raw: match[0],
-                            lang: match[1],
-                            data: match[2],
+                            lang: match[2],
+                            data: match[3],
                         }
                     }
                 },
                 renderer(token) {
-                    return `<pre><code lang="${token.lang}">${token.data}</code></pre>`;
+                    return `<x-frontmatter><code slot="frontmatter-contents" lang="${token.lang}">${token.data}</code></x-frontmatter>`;
                 }
             },
             {
@@ -96,6 +98,23 @@ export class MarkdownElement extends HTMLElement {
 }
 
 /**
+ * Element rendering Obsidian front matter.
+ */
+export class FrontMatterElement extends HTMLElement {
+    static getTemplate() {
+        return document.getElementById("template-frontmatter")
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    connectedCallback() {
+        const instanceDocument = FrontMatterElement.getTemplate().content.cloneNode(true)
+        const shadow = this.attachShadow({ mode: "open" })
+
+        shadow.appendChild(instanceDocument)
+    }
+}
+
+/**
  * Element rendering an Obsidian Hashtag.
  */
 export class HashtagElement extends HTMLElement {
@@ -120,25 +139,17 @@ export class WikilinkElement extends HTMLElement {
         return document.getElementById("template-wikilink")
     }
 
-    /**
-     * Get the card this Wikilink points to via the `wref` attribute.
-     *
-     * @returns {String} The card target.
-     */
-    getWikilinkWref() {
-        return this.getAttribute("wref")
-    }
-
     // noinspection JSUnusedGlobalSymbols
     connectedCallback() {
         const instanceDocument = WikilinkElement.getTemplate().content.cloneNode(true)
         const shadow = this.attachShadow({ mode: "open" })
 
-        const wref = this.getWikilinkWref()
+        const instanceElement = instanceDocument.querySelector(".wikilink")
 
-        this.addEventListener("click", function() {
-            console.warn("Would move to", wref, ", but navigation is not yet implemented.")
-        })
+        const destinationURL = new URL(window.location)
+        destinationURL.hash = this.getAttribute("wref")
+
+        instanceElement.href = destinationURL
 
         shadow.appendChild(instanceDocument)
     }

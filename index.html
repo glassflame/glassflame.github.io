@@ -11,7 +11,7 @@
 			:root {
 				--color-background: #ffffff;
 				--color-foreground: #000000;
-				--color-accent: #ff7f00;
+				--color-accent: initial;
 
 				--color-gray: #7E7E7E;
 				--color-red: #FB464C;
@@ -37,7 +37,6 @@
 				color: var(--color-foreground);
 			}
 		</style>
-		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 		<script type="module" src="src/index.mjs"></script>
 		<template id="template-display">
 			<slot name="display-container"></slot>
@@ -97,9 +96,15 @@
 					overflow-x: clip;
 					overflow-y: scroll;
 				}
+
+				.node-file-title {
+					font-size: 2em;
+					margin-block-start: .67em;
+					margin-block-end: .67em;
+				}
 			</style>
 			<article class="node-file">
-				<h1>
+				<h1 class="node-file-title">
 					<slot name="node-title">{Node title}</slot>
 				</h1>
 				<slot name="node-contents">{Node contents}</slot>
@@ -131,6 +136,14 @@
 		<template id="template-markdown">
 			<slot name="markdown-contents">{Markdown text}</slot>
 		</template>
+		<template id="template-frontmatter">
+			<style>
+				.frontmatter {
+					opacity: 50%;
+				}
+			</style>
+			<pre class="frontmatter"><slot name="frontmatter-contents">{Markdown text}</slot></pre>
+		</template>
 		<template id="template-canvas">
 			<style>
 				.canvas {
@@ -141,10 +154,23 @@
 					width: max-content;
 					height: max-content;
 				}
+
+				.canvas * {
+					left: 0;
+					top: 0;
+				}
+
+				.canvas *:first-child {
+					position: relative;
+				}
+
+				.canvas *:not(:first-child) {
+					position: absolute;
+				}
 			</style>
 			<div class="canvas">
-				<slot name="canvas-nodes">{Canvas nodes}</slot>
 				<slot name="canvas-edges">{Canvas edges}</slot>
+				<slot name="canvas-nodes">{Canvas nodes}</slot>
 			</div>
 		</template>
 		<template id="template-wikilink">
@@ -168,6 +194,5 @@
 		</template>
 	</head>
 	<body>
-		<x-display root vref="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/" wref="8 - Crittografia applicata/1 - Concetti/3 - Casualità ed entropia/★ mappa concettuale.canvas"/>
 	</body>
 </html>

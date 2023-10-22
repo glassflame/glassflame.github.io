@@ -69,12 +69,12 @@ export class DisplayElement extends HTMLElement {
         this.containerSlotted.remove()
         this.containerSlotted = null
 
-        const [, fileExtension] = fileDetails(this.getAttribute("wref"))
+        const fileExtension = fileDetails(this.getAttribute("wref")).extension
 
         this.containerSlotted = document.createElement({
             "md": customElements.getName(MarkdownElement),
-            "canvas": this.getAttribute("root") !== undefined ? customElements.getName(CanvasElement) : "div",
-        }[fileExtension] ?? "div")
+            "canvas": customElements.getName(CanvasElement),
+        }[fileExtension])
         this.containerSlotted.slot = "display-container"
         this.containerSlotted.setAttribute("contents", this.data)
         this.appendChild(this.containerSlotted)

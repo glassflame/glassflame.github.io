@@ -2,7 +2,7 @@
     :root:root {
         --color-background: #ffffff;
         --color-foreground: #1e1e1e;
-        --color-accent: #ff7f00;
+        --color-accent: initial;
 
         --color-gray: #7E7E7E;
         --color-red: #FB464C;

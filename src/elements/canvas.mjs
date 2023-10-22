@@ -60,7 +60,7 @@ export class CanvasElement extends HTMLElement {
         for(const node of this.parsedJSON["nodes"]) {
             const element = document.createElement(`x-node-${node["type"]}`)
 
-            element.setAttribute("id", node["id"])
+            element.setAttribute("id", `node-${node["id"]}`)
             element.setAttribute("x", node["x"] - minX["x"])
             element.setAttribute("y", node["y"] - minY["y"])
             element.setAttribute("width", node["width"])
@@ -74,7 +74,7 @@ export class CanvasElement extends HTMLElement {
 
                 case "file":
                     element.setAttribute("file", node["file"])
-                    element.setAttribute("fileName", fileDetails(node["file"])[0])
+                    element.setAttribute("file-name", fileDetails(node["file"]).name)
                     break
 
                 case "group":
@@ -92,7 +92,7 @@ export class CanvasElement extends HTMLElement {
 
         for(const edge of this.parsedJSON["edges"]) {
             const element = document.createElement("x-edge")
-            element.setAttribute("id", edge["id"])
+            element.setAttribute("id", `edge-${edge["id"]}`)
             element.setAttribute("node-from", edge["fromNode"])
             element.setAttribute("node-from-side", edge["fromSide"])
             element.setAttribute("node-to", edge["toNode"])
@@ -104,15 +104,9 @@ export class CanvasElement extends HTMLElement {
             this.edgesSlotted.appendChild(element)
         }
 
-        this.nodesSlotted.style["position"] = "relative"
-        this.nodesSlotted.style["left"] = "0"
-        this.nodesSlotted.style["top"] = "0"
         this.nodesSlotted.style["width"] = `${maxX["x"] + maxX["width"] - minX["x"]}px`
         this.nodesSlotted.style["height"] = `${maxY["y"] + maxY["height"] - minY["y"]}px`
 
-        this.edgesSlotted.style["position"] = "absolute"
-        this.edgesSlotted.style["left"] = "0"
-        this.edgesSlotted.style["top"] = "0"
         this.edgesSlotted.style["width"] = `${maxX["x"] + maxX["width"] - minX["x"]}px`
         this.edgesSlotted.style["height"] = `${maxY["y"] + maxY["height"] - minY["y"]}px`
 
