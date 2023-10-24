@@ -9,12 +9,8 @@ export class EdgeElement extends CanvasItemElement {
     svgSlotted
     lineElement
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = EdgeElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
-        const canvas = CanvasElement.findFirstCanvasAncestor(this)
+    onConnected() {
+        const canvas = this.findFirstAncestor(CanvasElement)
 
         const fromNode = canvas.nodeElements[this.getAttribute("node-from")]
         const fromSide = this.getAttribute("node-from-side")
@@ -48,7 +44,5 @@ export class EdgeElement extends CanvasItemElement {
 
         this.svgSlotted.appendChild(this.lineElement)
         this.appendChild(this.svgSlotted)
-
-        shadow.appendChild(instanceDocument)
     }
 }

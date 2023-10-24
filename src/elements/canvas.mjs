@@ -1,26 +1,8 @@
 import { fileDetails } from "../utils/file.mjs";
+import { CustomElement, NotImplementedError } from "./base.mjs";
 
 
-export class CanvasElement extends HTMLElement {
-    /**
-     * Return the closest {@link CanvasElement} ancestor in the tree.
-     *
-     * @param initial {HTMLElement} The element to start the search from.
-     */
-    static findFirstCanvasAncestor(initial) {
-        let current = initial
-        while(current) {
-            if(current instanceof ShadowRoot) {
-                current = current.host
-            }
-            if(current instanceof CanvasElement) {
-                return current
-            }
-            current = current.parentNode
-        }
-        return null
-    }
-
+export class CanvasElement extends CustomElement {
     static getTemplate() {
         return document.getElementById("template-canvas")
     }
@@ -32,10 +14,8 @@ export class CanvasElement extends HTMLElement {
     nodeElements = {}
     edgeElements = {}
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = CanvasElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
+    onConnected() {
+        super.onConnected();
 
         this.parsedJSON = JSON.parse(this.getAttribute("contents"))
 
@@ -112,16 +92,11 @@ export class CanvasElement extends HTMLElement {
 
         this.appendChild(this.nodesSlotted)
         this.appendChild(this.edgesSlotted)
-
-        shadow.appendChild(instanceDocument)
     }
 }
 
 
-/**
- * Element representing the generic skeleton of an Obsidian Canvas item.
- */
-export class CanvasItemElement extends HTMLElement {
+export class CanvasItemElement extends CustomElement {
     colorToHex() {
         const color = this.getAttribute("color")
 
@@ -133,7 +108,6 @@ export class CanvasItemElement extends HTMLElement {
             return color
         }
         else {
-            // TODO: Check which colors correspond to what
             return {
                 "0": "var(--color-gray)",
                 "1": "var(--color-red)",
@@ -143,6 +117,14 @@ export class CanvasItemElement extends HTMLElement {
                 "5": "var(--color-blue)",
                 "6": "var(--color-purple)",
             }[color]
+        }
+    }
+
+    constructor() {
+        super();
+
+        if(this.constructor === CanvasItemElement) {
+            throw new NotImplementedError("CanvasItemElement is being used as-is.")
         }
     }
 }

@@ -54,12 +54,8 @@ export class NodeGroupElement extends NodeElement {
     instanceElement
     labelSlotted
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = NodeGroupElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
-        this.instanceElement = instanceDocument.querySelector(".node-group")
+    onConnected() {
+        this.instanceElement = this.instance.querySelector(".node-group")
 
         this.instanceElement.style.setProperty("left", `${this.getAttribute("x")}px`)
         this.instanceElement.style.setProperty("top", `${this.getAttribute("y")}px`)
@@ -71,8 +67,6 @@ export class NodeGroupElement extends NodeElement {
         this.labelSlotted.slot = "node-label"
         this.labelSlotted.innerText = this.getAttribute("label")
         this.appendChild(this.labelSlotted)
-
-        shadow.appendChild(instanceDocument)
     }
 }
 
@@ -86,12 +80,8 @@ export class NodeFileElement extends NodeElement {
     nameSlotted
     contentsSlotted
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = NodeFileElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
-        this.instanceElement = instanceDocument.querySelector(".node-file")
+    onConnect() {
+        this.instanceElement = this.instance.querySelector(".node-file")
 
         this.instanceElement.style.setProperty("left", `${this.getAttribute("x")}px`)
         this.instanceElement.style.setProperty("top", `${this.getAttribute("y")}px`)
@@ -111,12 +101,10 @@ export class NodeFileElement extends NodeElement {
         this.contentsSlotted = document.createElement(customElements.getName(DisplayElement))
         this.contentsSlotted.slot = "node-contents"
 
-        const firstDisplayAncestor = DisplayElement.findFirstDisplayAncestor(this)
+        const firstDisplayAncestor = this.findFirstAncestor(DisplayElement)
         this.contentsSlotted.setAttribute("vref", firstDisplayAncestor.getAttribute("vref"))
         this.contentsSlotted.setAttribute("wref", this.getAttribute("file"))
         this.appendChild(this.contentsSlotted)
-
-        shadow.appendChild(instanceDocument)
     }
 }
 
@@ -128,12 +116,8 @@ export class NodeTextElement extends NodeElement {
     instanceElement
     contentsSlotted
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = NodeTextElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
-        this.instanceElement = instanceDocument.querySelector(".node-text")
+    onConnected() {
+        this.instanceElement = this.instance.querySelector(".node-text")
 
         this.instanceElement.style.setProperty("left", `${this.getAttribute("x")}px`)
         this.instanceElement.style.setProperty("top", `${this.getAttribute("y")}px`)
@@ -145,7 +129,5 @@ export class NodeTextElement extends NodeElement {
         this.contentsSlotted.slot = "node-contents"
         this.contentsSlotted.setAttribute("contents", this.getAttribute("text"))
         this.appendChild(this.contentsSlotted)
-
-        shadow.appendChild(instanceDocument)
     }
 }

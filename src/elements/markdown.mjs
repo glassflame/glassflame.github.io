@@ -1,12 +1,11 @@
 import { Marked } from "https://unpkg.com/marked@9.1.2/lib/marked.esm.js";
-import { fileDetails } from "../utils/file.mjs";
-import { DisplayElement } from "./display.mjs";
+import { CustomElement } from "./base.mjs";
 
 
 /**
  * Element rendering the Markdown contents of an Obsidian page.
  */
-export class MarkdownElement extends HTMLElement {
+export class MarkdownElement extends CustomElement {
     static marked = new Marked({
         extensions: [
             {
@@ -15,7 +14,7 @@ export class MarkdownElement extends HTMLElement {
                 start(src) {
                     return src.match(/^(-{3,})/)?.index
                 },
-                tokenizer(src, tokens) {
+                tokenizer(src, _) {
                     const match = src.match(/^(-{3,})(.+)?\n((?:.+\n)*)\1\n/)
                     if(match) {
                         return {
@@ -36,7 +35,7 @@ export class MarkdownElement extends HTMLElement {
                 start(src) {
                     return src.match(/^\[\[/)?.index
                 },
-                tokenizer(src, tokens) {
+                tokenizer(src, _) {
                     const match = src.match(/^\[\[([^|\]]+)(?:\|([^\]]+))?]]/)
                     if(match) {
                         return {
@@ -57,7 +56,7 @@ export class MarkdownElement extends HTMLElement {
                 start(src) {
                     return src.match(/^#/)?.index
                 },
-                tokenizer(src, tokens) {
+                tokenizer(src, _) {
                     const match = src.match(/^#([A-Za-z0-9]+)/)
                     if(match) {
                         return {
@@ -80,11 +79,7 @@ export class MarkdownElement extends HTMLElement {
         return document.getElementById("template-markdown")
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = MarkdownElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
+    onConnected() {
         const markdown = this.getAttribute("contents")
 
         this.contentsElement = document.createElement("div")
@@ -92,65 +87,41 @@ export class MarkdownElement extends HTMLElement {
         this.contentsElement.innerHTML = MarkdownElement.marked.parse(markdown)
 
         this.appendChild(this.contentsElement)
-
-        shadow.appendChild(instanceDocument)
     }
 }
 
 /**
  * Element rendering Obsidian front matter.
  */
-export class FrontMatterElement extends HTMLElement {
+export class FrontMatterElement extends CustomElement {
     static getTemplate() {
         return document.getElementById("template-frontmatter")
-    }
-
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = FrontMatterElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
-        shadow.appendChild(instanceDocument)
     }
 }
 
 /**
  * Element rendering an Obsidian Hashtag.
  */
-export class HashtagElement extends HTMLElement {
+export class HashtagElement extends CustomElement {
     static getTemplate() {
         return document.getElementById("template-hashtag")
-    }
-
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = HashtagElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
-        shadow.appendChild(instanceDocument)
     }
 }
 
 /**
  * Element rendering an Obsidian Wikilink.
  */
-export class WikilinkElement extends HTMLElement {
+export class WikilinkElement extends CustomElement {
     static getTemplate() {
         return document.getElementById("template-wikilink")
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = WikilinkElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
-        const instanceElement = instanceDocument.querySelector(".wikilink")
+    onConnected() {
+        const instanceElement = this.instance.querySelector(".wikilink")
 
         const destinationURL = new URL(window.location)
         destinationURL.hash = this.getAttribute("wref")
 
         instanceElement.href = destinationURL
-
-        shadow.appendChild(instanceDocument)
     }
 }

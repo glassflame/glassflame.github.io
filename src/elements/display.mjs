@@ -2,28 +2,10 @@ import { fileDetails } from "../utils/file.mjs";
 import { CanvasElement } from "./canvas.mjs";
 import { MarkdownElement } from "./markdown.mjs";
 import { FetchError } from "./node.mjs";
+import { CustomElement } from "./base.mjs";
 
 
-export class DisplayElement extends HTMLElement {
-    /**
-     * Return the closest {@link DisplayElement} ancestor in the tree.
-     *
-     * @param initial {HTMLElement} The element to start the search from.
-     */
-    static findFirstDisplayAncestor(initial) {
-        let current = initial
-        while(current) {
-            if(current instanceof ShadowRoot) {
-                current = current.host
-            }
-            if(current instanceof DisplayElement) {
-                return current
-            }
-            current = current.parentNode
-        }
-        return null
-    }
-
+export class DisplayElement extends CustomElement {
     static getTemplate() {
         return document.getElementById("template-display")
     }
@@ -31,11 +13,7 @@ export class DisplayElement extends HTMLElement {
     containerSlotted
     loadButton
 
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        const instanceDocument = DisplayElement.getTemplate().content.cloneNode(true)
-        const shadow = this.attachShadow({ mode: "open" })
-
+    onConnected() {
         this.containerSlotted = document.createElement("div")
         this.containerSlotted.slot = "display-container"
         this.loadButton = document.createElement("button")
@@ -43,8 +21,6 @@ export class DisplayElement extends HTMLElement {
         this.loadButton.addEventListener("click", this.load.bind(this))
         this.containerSlotted.appendChild(this.loadButton)
         this.appendChild(this.containerSlotted)
-
-        shadow.appendChild(instanceDocument)
     }
 
     data
