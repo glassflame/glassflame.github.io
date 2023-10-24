@@ -61,7 +61,7 @@ export class NodeGroupElement extends NodeElement {
         this.instanceElement.style.setProperty("top", `${this.getAttribute("y")}px`)
         this.instanceElement.style.setProperty("width", `${this.getAttribute("width")}px`)
         this.instanceElement.style.setProperty("height", `${this.getAttribute("height")}px`)
-        this.instanceElement.style.setProperty("--color-node", this.colorToHex())
+        this.instanceElement.style.setProperty("--color-node", this.constructor.colorToCSS(this.getAttribute("color")))
 
         this.labelSlotted = document.createElement("span")
         this.labelSlotted.slot = "node-label"
@@ -80,14 +80,14 @@ export class NodeFileElement extends NodeElement {
     nameSlotted
     contentsSlotted
 
-    onConnect() {
+    onConnected() {
         this.instanceElement = this.instance.querySelector(".node-file")
 
         this.instanceElement.style.setProperty("left", `${this.getAttribute("x")}px`)
         this.instanceElement.style.setProperty("top", `${this.getAttribute("y")}px`)
         this.instanceElement.style.setProperty("width", `${this.getAttribute("width")}px`)
         this.instanceElement.style.setProperty("height", `${this.getAttribute("height")}px`)
-        this.instanceElement.style.setProperty("--color-node", this.colorToHex())
+        this.instanceElement.style.setProperty("--color-node", this.constructor.colorToCSS(this.getAttribute("color")))
 
         this.nameSlotted = document.createElement("x-wikilink")
         this.nameSlotted.slot = "node-title"
@@ -123,7 +123,7 @@ export class NodeTextElement extends NodeElement {
         this.instanceElement.style.setProperty("top", `${this.getAttribute("y")}px`)
         this.instanceElement.style.setProperty("width", `${this.getAttribute("width")}px`)
         this.instanceElement.style.setProperty("height", `${this.getAttribute("height")}px`)
-        this.instanceElement.style.setProperty("--color-node", this.colorToHex())
+        this.instanceElement.style.setProperty("--color-node", this.constructor.colorToCSS(this.getAttribute("color")))
 
         this.contentsSlotted = document.createElement("x-markdown")
         this.contentsSlotted.slot = "node-contents"

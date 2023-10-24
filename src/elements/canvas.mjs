@@ -149,10 +149,17 @@ export class CanvasElement extends CustomElement {
 }
 
 
+/**
+ * Abstract base class for elements drawn on a {@link CanvasElement}.
+ * @abstract
+ */
 export class CanvasItemElement extends CustomElement {
-    colorToHex() {
-        const color = this.getAttribute("color")
-
+    /**
+     * Given an Obsidian Canvas color, return its corresponding CSS color.
+     * @param color {string} The color, as serialized on an Obsidian Canvas.
+     * @returns {string} The corresponding CSS color.
+     */
+    static colorToCSS(color) {
         if(color === undefined || color === null || color === "") {
             return "var(--color-gray)"
         }

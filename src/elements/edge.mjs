@@ -32,7 +32,7 @@ export class EdgeElement extends CanvasItemElement {
         this.lineElement.setAttribute("y1", y1)
         this.lineElement.setAttribute("x2", x2)
         this.lineElement.setAttribute("y2", y2)
-        this.lineElement.style.setProperty("stroke", this.colorToHex())
+        this.lineElement.style.setProperty("stroke", this.constructor.colorToCSS(this.getAttribute("color")))
         this.lineElement.style.setProperty("stroke-width", "var(--edge-width)")
 
         this.svgSlotted.appendChild(this.lineElement)
