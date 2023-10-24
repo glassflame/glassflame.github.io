@@ -20,13 +20,6 @@ export class EdgeElement extends CanvasItemElement {
         const toSide = this.getAttribute("node-to-side")
         const [x2, y2] = toNode.getCenterCoordinatesOfSide(toSide)
 
-        const minX = Math.min(x1, x2)
-        const minY = Math.min(y1, y2)
-        const diffX = Math.abs(x1 - x2)
-        const diffY = Math.abs(y1 - y2)
-
-        const arrows = this.getAttribute("arrows") ?? "end"
-
         this.svgSlotted = document.createElementNS("http://www.w3.org/2000/svg", "svg")
         this.svgSlotted.slot = "edge-svg"
         this.svgSlotted.style.setProperty("position", "absolute")
