@@ -1,64 +1,61 @@
-export class NotImplementedError extends Error {}
+import { NotImplementedError } from "../utils/errors.mjs";
 
 
+/**
+ * Abstract base utility class to simplify the construction of custom elements.
+ * @abstract Implementors must override {@link template}.
+ */
 export class CustomElement extends HTMLElement {
-
-    template
-    shadow
-    instance
-
-    // noinspection JSUnusedGlobalSymbols
-    connectedCallback() {
-        // The template to duplicate.
-        this.template = this.constructor.getTemplate()
-        // The shadow root, the inner contents of the element..
-        this.shadow = this.attachShadow({ mode: "open" })
-        // The element contained inside the shadow root..
-        this.instance = this.template.content.cloneNode(true)
-
-        // Call the custom callback.
-        this.onConnected()
-
-        // Add the instance to the DOM.
-        this.shadow.appendChild(this.instance)
-    }
-
-    findFirstAncestor(constructor) {
-        let current = this
-        // Keep iterating over nodes
-        while(current) {
-            // The ancestor has been found!
-            if(current instanceof constructor) {
-                return current
-            }
-            // Use .host to access the parent of a ShadowRoot
-            else if(current instanceof ShadowRoot) {
-                current = current.host
-            }
-            // Use .parentNode to access the parent of a HTMLElement
-            else if(current instanceof HTMLElement) {
-                current = current.parentNode
-            }
-            // Something went wrong?
-            else {
-                console.warn("[findFirstAncestor] Reached unknown node:", current)
-            }
-        }
-        // The ancestor has NOT been found...
-        return null
-    }
-
     constructor() {
         super();
-
+        // Prevent accidental instantiation of this class.
         if(this.constructor === CustomElement) {
-            throw new NotImplementedError("CustomElement is being used as-is.")
+            throw new NotImplementedError("CustomElement is being used as-is, but is an abstract class.")
         }
     }
 
-    onConnected() {}
-
-    static getTemplate() {
-        throw new NotImplementedError("CustomElement.getTemplate has not been overridden.")
+    /**
+     * Get the `<template>` to use when instantiating this element.
+     * @abstract Must be overridden!
+     */
+    static get template() {
+        throw new NotImplementedError("template has not been overridden.")
     }
+
+    /**
+     * The local cloned instance of the template node.
+     * @type {Node}
+     */
+    #instance
+
+    /**
+     * The local cloned instance of the template node.
+     * @returns {Node}
+     */
+    get instance() {
+        return this.#instance
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    /**
+     * Callback automatically called when this element is added to the DOM.
+     */
+    connectedCallback() {
+        // The template to duplicate.
+        const template = this.constructor.getTemplate()
+        // The shadow root, the inner contents of the element..
+        const shadow = this.attachShadow({ mode: "open" })
+        // The element contained inside the shadow root..
+        this.#instance = template.content.cloneNode(true)
+        // Call the custom callback.
+        this.onConnect()
+        // Add the instance to the DOM.
+        shadow.appendChild(this.#instance)
+    }
+
+    /**
+     * Do something just before `instance` is added to
+     * @abstract Will do nothing if not overridden.
+     */
+    onConnect() {}
 }

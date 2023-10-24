@@ -1,5 +1,5 @@
 import { fileDetails } from "../utils/file.mjs";
-import { CanvasElement } from "./canvas.mjs";
+import { CanvasElement } from "./canvas/canvas.mjs";
 import { MarkdownElement } from "./markdown.mjs";
 import { FetchError } from "./node.mjs";
 import { CustomElement } from "./base.mjs";
@@ -13,7 +13,7 @@ export class DisplayElement extends CustomElement {
     containerSlotted
     loadButton
 
-    onConnected() {
+    onConnect() {
         this.containerSlotted = document.createElement("div")
         this.containerSlotted.slot = "display-container"
         this.loadButton = document.createElement("button")

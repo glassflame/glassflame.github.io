@@ -79,7 +79,7 @@ export class MarkdownElement extends CustomElement {
         return document.getElementById("template-markdown")
     }
 
-    onConnected() {
+    onConnect() {
         const markdown = this.getAttribute("contents")
 
         this.contentsElement = document.createElement("div")
@@ -116,7 +116,7 @@ export class WikilinkElement extends CustomElement {
         return document.getElementById("template-wikilink")
     }
 
-    onConnected() {
+    onConnect() {
         const instanceElement = this.instance.querySelector(".wikilink")
 
         const destinationURL = new URL(window.location)

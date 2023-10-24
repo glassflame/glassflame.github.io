@@ -1,4 +1,4 @@
-import { CanvasItemElement } from "./canvas.mjs";
+import { CanvasItemElement } from "./canvas/canvas.mjs";
 import { DisplayElement } from "./display.mjs";
 
 
@@ -54,7 +54,7 @@ export class NodeGroupElement extends NodeElement {
     instanceElement
     labelSlotted
 
-    onConnected() {
+    onConnect() {
         this.instanceElement = this.instance.querySelector(".node-group")
 
         this.instanceElement.style.setProperty("left", `${this.getAttribute("x")}px`)
@@ -80,7 +80,7 @@ export class NodeFileElement extends NodeElement {
     nameSlotted
     contentsSlotted
 
-    onConnected() {
+    onConnect() {
         this.instanceElement = this.instance.querySelector(".node-file")
 
         this.instanceElement.style.setProperty("left", `${this.getAttribute("x")}px`)
@@ -116,7 +116,7 @@ export class NodeTextElement extends NodeElement {
     instanceElement
     contentsSlotted
 
-    onConnected() {
+    onConnect() {
         this.instanceElement = this.instance.querySelector(".node-text")
 
         this.instanceElement.style.setProperty("left", `${this.getAttribute("x")}px`)

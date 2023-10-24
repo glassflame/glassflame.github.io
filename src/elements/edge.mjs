@@ -1,4 +1,4 @@
-import { CanvasElement, CanvasItemElement } from "./canvas.mjs";
+import { CanvasElement, CanvasItemElement } from "./canvas/canvas.mjs";
 
 
 export class EdgeElement extends CanvasItemElement {
@@ -9,7 +9,7 @@ export class EdgeElement extends CanvasItemElement {
     svgSlotted
     lineElement
 
-    onConnected() {
+    onConnect() {
         const canvas = this.findFirstAncestor(CanvasElement)
 
         const fromNode = canvas.nodeElements[this.getAttribute("node-from")]

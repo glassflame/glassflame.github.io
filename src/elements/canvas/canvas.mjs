@@ -1,32 +1,115 @@
-import { fileDetails } from "../utils/file.mjs";
-import { CustomElement, NotImplementedError } from "./base.mjs";
+import { fileDetails } from "../../utils/file.mjs";
+import { CustomElement } from "../base.mjs";
 
 
 /**
  * The renderer of an Obsidian Canvas.
  */
 export class CanvasElement extends CustomElement {
-    static getTemplate() {
+    static get template() {
         return document.getElementById("template-canvas")
     }
 
     /**
-     * Parsed value of the `contents` attribute at the moment of connection to the DOM.
-     * @type {any}
+     * The contents of the Canvas, as they were the last time they were updated.
+     * @type {string}
      */
-    parsedContents
+    #contents
+
+    /**
+     * The contents of the Canvas, as they were the last time they were updated.
+     * @returns {string} The raw contents.
+     */
+    get contents() {
+        return this.#contents
+    }
+
+    /**
+     * The parsed contents of the Canvas, as they were the last time they were updated.
+     * @type {Object}
+     */
+    #parsedContents
+
+    /**
+     * The parsed contents of the Canvas, as they were the last time they were updated.
+     * @returns {Object} The parsed contents.
+     */
+    get parsedContents() {
+        return this.#parsedContents
+    }
+
+    /**
+     * Update the values of {@link contents} and {@link parsedContents} from the `contents` attribute of the element.
+     * @throws SyntaxError If `contents` is not valid JSON.
+     */
+    updateContents() {
+        this.#contents = this.getAttribute("contents")
+        this.#parsedContents = JSON.parse(this.#contents)
+    }
+
+    /**
+     * The minimum X node found in the items of this Canvas.
+     * Used to compute this element's rect.
+     * Can be computed from {@link contents} with {@link computeMinMax}.
+     * @type {{x: number, width: number}}
+     */
+    minX
+
+    /**
+     * The minimum Y node found in the items of this Canvas.
+     * Used to compute this element's rect.
+     * Can be computed from {@link contents} with {@link computeMinMax}.
+     * @type {{y: number, height: number}}
+     */
+    minY
+
+    /**
+     * The maximum X node found in the items of this Canvas.
+     * Used to compute this element's rect.
+     * Can be computed from {@link contents} with {@link computeMinMax}.
+     * @type {{x: number, width: number}}
+     */
+    maxX
+
+    /**
+     * The maximum Y node found in the items of this Canvas.
+     * Used to compute this element's rect.
+     * Can be computed from {@link contents} with {@link computeMinMax}.
+     * @type {{y: number, height: number}}
+     */
+    maxY
+
+    /**
+     * Compute {@link minX}, {@link minY}, {@link maxX}, {@link maxY} from {@link contents}.
+     * @returns {void}
+     */
+    computeMinMax() {
+        // Define initial values.
+        this.minX = { x: Infinity, width: 0 }
+        this.minY = { y: Infinity, height: 0 }
+        this.maxX = { x: -Infinity, width: 0 }
+        this.maxY = { y: -Infinity, height: 0 }
+        // Iterate over nodes.
+        for(const node of this.parsedContents["nodes"]) {
+            // Convert node values from strings to numbers.
+            let {x, y, width, height} = node
+            x, y, width, height = Number(x), Number(y), Number(width), Number(height)
+            // Update minX.
+            if(x < this.minX.x) this.minX = node
+            // Update minY.
+            if(y < this.minY.y) this.minY = node
+            // Update maxX.
+            if(x + width > this.maxX.x + width) this.maxX = node
+            // Update maxY.
+            if(y + height > this.maxY.y + height) this.maxY = node
+        }
+    }
 
     /**
      * `<div>` containing all the {@link NodeElement}s of this Canvas.
      * @type {HTMLDivElement}
      */
     nodesContainer
-
-    /**
-     * `<div>` containing all the {@link NodeElement}s of this Canvas.
-     * @type {HTMLDivElement}
-     */
-    edgesContainer
 
     /**
      * Mapping associating ids to their respective {@link NodeElement}s of this Canvas.
@@ -47,46 +130,39 @@ export class CanvasElement extends CustomElement {
     nodeElementsByPath = {}
 
     /**
-     * Mapping associating ids to their respective {@link EdgeElement}s of this Canvas.
-     * @type {{[id: string]: EdgeElement}}
+     * Name of the slot where the node container should be placed.
+     * @type {string}
      */
-    edgeElementsById = {}
+    static NODES_SLOT_NAME = "canvas-nodes"
 
-    onConnected() {
-        super.onConnected();
+    /**
+     * Prefix to the name of the element to create for each node.
+     * @type {string}
+     */
+    static NODE_ELEMENT_NAME_PREFIX = "x-node-"
 
-        this.parsedContents = JSON.parse(this.getAttribute("contents"))
+    /**
+     * Destroy and recreate the {@link nodesContainer} with the current {@link parsedContents}, {@link minX}, {@link minY}, {@link maxX}, {@link maxY}.
+     * @returns {void}
+     */
+    recreateNodes() {
+        if(this.nodesContainer) {
+            this.nodesContainer.remove()
+            this.nodesContainer = null
+        }
 
         this.nodesContainer = document.createElement("div")
-        this.nodesContainer.slot = "canvas-nodes"
-
-        this.edgesContainer = document.createElement("div")
-        this.edgesContainer.slot = "canvas-edges"
-
-        let minX = { x: Infinity, width: 0 }
-        let minY = { y: Infinity, height: 0 }
-        let maxX = { x: -Infinity, width: 0 }
-        let maxY = { y: -Infinity, height: 0 }
-
-        for(const node of this.parsedContents["nodes"]) {
-            let {x, y, width, height} = node
-            x, y, width, height = Number(x), Number(y), Number(width), Number(height)
-
-            if(x < minX.x) minX = node
-            if(y < minY.y) minY = node
-            if(x + width > maxX.x + width) maxX = node
-            if(y + height > maxY.y + height) maxY = node
-        }
+        this.nodesContainer.slot = this.constructor.NODES_SLOT_NAME
 
         for(const node of this.parsedContents["nodes"]) {
             let {id, type, color, x, y, width, height} = node
             x, y, width, height = Number(x), Number(y), Number(width), Number(height)
 
-            const element = document.createElement(`x-node-${type}`)
+            const element = document.createElement(`${this.constructor.NODE_ELEMENT_NAME_PREFIX}${type}`)
 
             element.setAttribute("id", `node-${id}`)
-            element.setAttribute("x", `${x - minX.x}`)
-            element.setAttribute("y", `${y - minY.y}`)
+            element.setAttribute("x", `${x - this.minX.x}`)
+            element.setAttribute("y", `${y - this.minY.y}`)
             element.setAttribute("width", `${width}`)
             element.setAttribute("height", `${height}`)
             if(color) element.setAttribute("color", color)
@@ -120,6 +196,30 @@ export class CanvasElement extends CustomElement {
 
             this.nodesContainer.appendChild(element)
         }
+        // TODO: You were here last time!
+    }
+
+    /**
+     * `<div>` containing all the {@link NodeElement}s of this Canvas.
+     * @type {HTMLDivElement}
+     */
+    edgesContainer
+
+    /**
+     * Mapping associating ids to their respective {@link EdgeElement}s of this Canvas.
+     * @type {{[id: string]: EdgeElement}}
+     */
+    edgeElementsById = {}
+
+
+    onConnect() {
+        this.updateContents()
+        this.computeMinMax()
+        this.recreateNodes()
+
+        this.edgesContainer = document.createElement("div")
+        this.edgesContainer.slot = "canvas-edges"
+
 
         for(const edge of this.parsedContents["edges"]) {
             let {id, fromNode, fromSide, toNode, toSide, color, toEnd: arrows} = edge
