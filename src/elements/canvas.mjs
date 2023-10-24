@@ -2,96 +2,149 @@ import { fileDetails } from "../utils/file.mjs";
 import { CustomElement, NotImplementedError } from "./base.mjs";
 
 
+/**
+ * The renderer of an Obsidian Canvas.
+ */
 export class CanvasElement extends CustomElement {
     static getTemplate() {
         return document.getElementById("template-canvas")
     }
 
-    parsedJSON
+    /**
+     * Parsed value of the `contents` attribute at the moment of connection to the DOM.
+     * @type {any}
+     */
+    parsedContents
 
-    nodesSlotted
-    edgesSlotted
-    nodeElements = {}
-    edgeElements = {}
+    /**
+     * `<div>` containing all the {@link NodeElement}s of this Canvas.
+     * @type {HTMLDivElement}
+     */
+    nodesContainer
+
+    /**
+     * `<div>` containing all the {@link NodeElement}s of this Canvas.
+     * @type {HTMLDivElement}
+     */
+    edgesContainer
+
+    /**
+     * Mapping associating ids to their respective {@link NodeElement}s of this Canvas.
+     * @type {{[id: string]: NodeElement}}
+     */
+    nodeElementsById = {}
+
+    /**
+     * Mapping associating names to their respective {@link NodeElement}s of this Canvas.
+     * @type {{[name: string]: NodeElement}}
+     */
+    nodeElementsByName = {}
+
+    /**
+     * Mapping associating vault-relative paths to their respective {@link NodeElement}s of this Canvas.
+     * @type {{[name: string]: NodeElement}}
+     */
+    nodeElementsByPath = {}
+
+    /**
+     * Mapping associating ids to their respective {@link EdgeElement}s of this Canvas.
+     * @type {{[id: string]: EdgeElement}}
+     */
+    edgeElementsById = {}
 
     onConnected() {
         super.onConnected();
 
-        this.parsedJSON = JSON.parse(this.getAttribute("contents"))
+        this.parsedContents = JSON.parse(this.getAttribute("contents"))
 
-        this.nodesSlotted = document.createElement("div")
-        this.nodesSlotted.slot = "canvas-nodes"
+        this.nodesContainer = document.createElement("div")
+        this.nodesContainer.slot = "canvas-nodes"
 
-        this.edgesSlotted = document.createElement("div")
-        this.edgesSlotted.slot = "canvas-edges"
+        this.edgesContainer = document.createElement("div")
+        this.edgesContainer.slot = "canvas-edges"
 
         let minX = { x: Infinity, width: 0 }
         let minY = { y: Infinity, height: 0 }
         let maxX = { x: -Infinity, width: 0 }
         let maxY = { y: -Infinity, height: 0 }
 
-        for(const node of this.parsedJSON["nodes"]) {
-            if(node["x"] < minX["x"]) minX = node
-            if(node["y"] < minY["y"]) minY = node
-            if(node["x"] + node["width"] > maxX["x"] + node["width"]) maxX = node
-            if(node["y"] + node["height"] > maxY["y"] + node["height"]) maxY = node
+        for(const node of this.parsedContents["nodes"]) {
+            let {x, y, width, height} = node
+            x, y, width, height = Number(x), Number(y), Number(width), Number(height)
+
+            if(x < minX.x) minX = node
+            if(y < minY.y) minY = node
+            if(x + width > maxX.x + width) maxX = node
+            if(y + height > maxY.y + height) maxY = node
         }
 
-        for(const node of this.parsedJSON["nodes"]) {
-            const element = document.createElement(`x-node-${node["type"]}`)
+        for(const node of this.parsedContents["nodes"]) {
+            let {id, type, color, x, y, width, height} = node
+            x, y, width, height = Number(x), Number(y), Number(width), Number(height)
 
-            element.setAttribute("id", `node-${node["id"]}`)
-            element.setAttribute("x", node["x"] - minX["x"])
-            element.setAttribute("y", node["y"] - minY["y"])
-            element.setAttribute("width", node["width"])
-            element.setAttribute("height", node["height"])
-            if(node["color"]) element.setAttribute("color", node["color"])
+            const element = document.createElement(`x-node-${type}`)
 
-            switch(node["type"]) {
+            element.setAttribute("id", `node-${id}`)
+            element.setAttribute("x", `${x - minX.x}`)
+            element.setAttribute("y", `${y - minY.y}`)
+            element.setAttribute("width", `${width}`)
+            element.setAttribute("height", `${height}`)
+            if(color) element.setAttribute("color", color)
+
+            this.nodeElementsById[id] = element
+
+            switch(type) {
                 case "text":
-                    element.setAttribute("text", node["text"])
+                    const {text} = node
+                    element.setAttribute("text", text)
                     break
 
                 case "file":
-                    element.setAttribute("file", node["file"])
-                    element.setAttribute("file-name", fileDetails(node["file"]).name)
+                    const {file} = node
+                    const {name} = fileDetails(file)
+                    element.setAttribute("file", file)
+                    element.setAttribute("file-name", name)
+                    this.nodeElementsByPath[file] = element
+                    this.nodeElementsByName[name] = element
                     break
 
                 case "group":
-                    element.setAttribute("label", node["label"])
+                    const {label} = node
+                    element.setAttribute("label", label)
                     break
 
                 default:
-                    console.warn("Encountered node of unimplemented type: ", node["type"])
+                    console.warn("Encountered node of unimplemented type: ", type)
                     break
             }
 
-            this.nodeElements[node["id"]] = element
-            this.nodesSlotted.appendChild(element)
+            this.nodesContainer.appendChild(element)
         }
 
-        for(const edge of this.parsedJSON["edges"]) {
+        for(const edge of this.parsedContents["edges"]) {
+            let {id, fromNode, fromSide, toNode, toSide, color, toEnd: arrows} = edge
+
             const element = document.createElement("x-edge")
-            element.setAttribute("id", `edge-${edge["id"]}`)
-            element.setAttribute("node-from", edge["fromNode"])
-            element.setAttribute("node-from-side", edge["fromSide"])
-            element.setAttribute("node-to", edge["toNode"])
-            element.setAttribute("node-to-side", edge["toSide"])
-            if(edge["color"]) element.setAttribute("color", edge["color"])
-            if(edge["arrows"]) element.setAttribute("arrows", edge["toEnd"])
+            element.setAttribute("id", `edge-${id}`)
+            element.setAttribute("node-from", fromNode)
+            element.setAttribute("node-from-side", fromSide)
+            element.setAttribute("node-to", toNode)
+            element.setAttribute("node-to-side", toSide)
+            if(edge["color"]) element.setAttribute("color", color)
+            if(edge["arrows"]) element.setAttribute("arrows", arrows)
 
-            this.edgeElements[edge["id"]] = element
-            this.edgesSlotted.appendChild(element)
+            this.edgeElementsById[id] = element
+            this.edgesContainer.appendChild(element)
         }
 
-        this.nodesSlotted.style["width"] = `${maxX["x"] + maxX["width"] - minX["x"]}px`
-        this.nodesSlotted.style["height"] = `${maxY["y"] + maxY["height"] - minY["y"]}px`
+        this.nodesContainer.style["width"] = `${maxX.x + maxX.width - minX.x}px`
+        this.nodesContainer.style["height"] = `${maxY.y + maxY.height - minY.y}px`
 
-        this.edgesSlotted.style["width"] = `${maxX["x"] + maxX["width"] - minX["x"]}px`
-        this.edgesSlotted.style["height"] = `${maxY["y"] + maxY["height"] - minY["y"]}px`
+        this.edgesContainer.style["width"] = `${maxX.x + maxX.width - minX.x}px`
+        this.edgesContainer.style["height"] = `${maxY.y + maxY.height - minY.y}px`
 
-        this.appendChild(this.nodesSlotted)
-        this.appendChild(this.edgesSlotted)
+        this.appendChild(this.nodesContainer)
+        this.appendChild(this.edgesContainer)
     }
 }
 
