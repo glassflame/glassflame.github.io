@@ -42,17 +42,10 @@
 		<template id="template-node-group">
 			<style>
 				.node-group {
-					position: absolute;
-					box-sizing: border-box;
-
-					--color-node: var(--color-gray);
 					outline: var(--node-group-border-width) solid var(--color-node);
 					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
 					border-radius: 0 8px 8px 8px;
 					padding: 12px;
-
-					overflow-x: visible;
-					overflow-y: visible;
 				}
 
 				.node-group-label {
@@ -73,11 +66,9 @@
 					margin: 0;
 				}
 			</style>
-			<section class="node-group">
-				<aside class="node-group-label">
-					<h1><slot name="node-label">{Group label}</slot></h1>
-				</aside>
-			</section>
+			<aside class="canvas-item node node-group">
+				<h1><slot name="node-group-label">{Group label}</slot></h1>
+			</aside>
 		</template>
 		<template id="template-node-file">
 			<style>

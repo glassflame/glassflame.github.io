@@ -1,7 +1,7 @@
 import { fileDetails } from "../utils/file.mjs";
 import { CanvasElement } from "./canvas/canvas.mjs";
 import { MarkdownElement } from "./markdown.mjs";
-import { FetchError } from "./node.mjs";
+import { FetchError } from "src/elements/canvas/node/base.mjs";
 import { CustomElement } from "./base.mjs";
 
 

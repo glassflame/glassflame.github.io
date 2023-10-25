@@ -30,7 +30,7 @@ export class CustomElement extends HTMLElement {
 
     /**
      * The local cloned instance of the template node.
-     * @returns {Node}
+     * @returns {DocumentFragment}
      */
     get instance() {
         return this.#instance
