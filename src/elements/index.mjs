@@ -1,5 +1,4 @@
-export {NodeFileElement, NodeGroupElement, NodeTextElement} from "src/elements/canvas/node/base.mjs"
-export {MarkdownElement, HashtagElement, WikilinkElement, FrontMatterElement} from "./markdown.mjs"
-export {CanvasElement} from "./canvas/canvas.mjs"
+export {CanvasElement, NodeFileElement, NodeGroupElement, NodeTextElement, EdgeElement} from "./canvas/index.mjs"
+export {MarkdownElement, HashtagElement, WikilinkElement, FrontMatterElement} from "./markdown/index.mjs"
 export {DisplayElement} from "./display.mjs"
-export {EdgeElement} from "src/elements/canvas/edge/base.mjs"
+export {VaultElement} from "./vault.mjs"

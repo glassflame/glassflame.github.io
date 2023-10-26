@@ -1,4 +1,4 @@
-import { NodeElement } from "src/elements/canvas/node/base.mjs";
+import { NodeElement } from "./base.mjs";
 
 
 /**
@@ -6,6 +6,10 @@ import { NodeElement } from "src/elements/canvas/node/base.mjs";
  * Visual only, does not actually contain any other nodes.
  */
 export class NodeGroupElement extends NodeElement {
+    static get template() {
+        return document.getElementById("template-node-group")
+    }
+
     /**
      * The label text of the group.
      * Obtained from the `label` attribute of the element.
@@ -39,10 +43,6 @@ export class NodeGroupElement extends NodeElement {
         this.labelSlotted.slot = this.constructor.LABEL_ELEMENT_SLOT
         this.labelSlotted.innerText = this.label
         this.appendChild(this.labelSlotted)
-    }
-
-    static getTemplate() {
-        return document.getElementById("template-node-group")
     }
 
     onConnect() {

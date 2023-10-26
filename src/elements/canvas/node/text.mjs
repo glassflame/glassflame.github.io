@@ -1,12 +1,11 @@
-import { NodeElement } from "src/elements/canvas/node/base.mjs";
-import { DisplayElement } from "src/elements/display.mjs";
+import { NodeElement } from "./base.mjs"
 
 
 /**
  * A {@link NodeElement} directly rendering a Markdown document.
  */
 export class NodeTextElement extends NodeElement {
-    static getTemplate() {
+    static get template() {
         return document.getElementById("template-node-text")
     }
 
@@ -14,11 +13,12 @@ export class NodeTextElement extends NodeElement {
      * Get the Markdown source of this node from the `document` attribute.
      */
     get markdownDocument() {
-        return this.getAttribute("text")
+        return this.getAttribute("document")
     }
 
     /**
      * The element displaying the contents of the node.
+     * Can be recreated with {@link recreateContentsElement}.
      * @type {MarkdownElement}
      */
     contentsElement
@@ -27,7 +27,7 @@ export class NodeTextElement extends NodeElement {
      * The name of the slot where {@link contentsElement} should be placed in.
      * @type {string}
      */
-    static CONTENTS_ELEMENT_SLOT = "node-file-contents"
+    static CONTENTS_ELEMENT_SLOT = "node-text-contents"
 
     /**
      * Recreate {@link labelElement} with the current value of {@link fileName}.

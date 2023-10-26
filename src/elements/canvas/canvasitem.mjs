@@ -1,4 +1,4 @@
-import { CustomElement } from "src/elements/base.mjs";
+import { CustomElement } from "../base.mjs";
 
 
 /**

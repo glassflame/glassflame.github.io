@@ -1,11 +1,11 @@
-import { NodeElement } from "src/elements/canvas/node/base.mjs";
-import { DisplayElement } from "src/elements/display.mjs";
-import { fileDetails } from "src/utils/file.mjs";
-import { findFirstAncestor } from "src/utils/trasversal.mjs";
+import { NodeElement } from "./base.mjs";
+import { DisplayElement } from "../../display.mjs";
+import { fileDetails } from "../../../utils/file.mjs";
+import { findFirstAncestor } from "../../../utils/trasversal.mjs";
 
 
 export class NodeFileElement extends NodeElement {
-    static getTemplate() {
+    static get template() {
         return document.getElementById("template-node-file")
     }
 

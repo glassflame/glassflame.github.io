@@ -1,13 +1,13 @@
-import { CanvasElement } from "src/elements/canvas/canvas.mjs";
-import { CanvasItemElement } from "src/elements/canvas/canvasitem.mjs";
-import { findFirstAncestor } from "src/utils/trasversal.mjs";
+import { CanvasElement } from "../canvas.mjs";
+import { CanvasItemElement } from "../canvasitem.mjs";
+import { findFirstAncestor } from "../../../utils/trasversal.mjs";
 
 
 /**
  * An edge of a {@link CanvasElement}.
  */
 export class EdgeElement extends CanvasItemElement {
-    static getTemplate() {
+    static get template() {
         return document.getElementById("template-edge")
     }
 
@@ -22,7 +22,7 @@ export class EdgeElement extends CanvasItemElement {
      * Recalculate the value of {@link canvas}.
      */
     recalculateCanvas() {
-        findFirstAncestor(this, CanvasElement)
+        this.canvas = findFirstAncestor(this, CanvasElement)
     }
 
     /**
@@ -94,15 +94,37 @@ export class EdgeElement extends CanvasItemElement {
      */
     lineElement
 
-    // TODO: Last time, you were here!
+    static SVG_ELEMENT_SLOT = "edge-svg"
 
     /**
      * Recreate {@link svgElement} and {@link lineElement} with the current values of the element.
      * @returns {void}
      */
     recreateSvgElement() {
+        if(this.svgElement) {
+            this.svgElement.remove()
+            this.svgElement = null
+            this.lineElement = null
+        }
+
         const [x1, y1] = this.fromNode.edgeHandle(this.nodeFromSide)
         const [x2, y2] = this.toNode.edgeHandle(this.nodeToSide)
+
+        this.lineElement = document.createElementNS("http://www.w3.org/2000/svg", "line")
+        this.lineElement.setAttribute("x1", x1.toString())
+        this.lineElement.setAttribute("y1", y1.toString())
+        this.lineElement.setAttribute("x2", x2.toString())
+        this.lineElement.setAttribute("y2", y2.toString())
+
+        this.svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+        this.svgElement.slot = this.constructor.SVG_ELEMENT_SLOT
+        this.svgElement.style.setProperty("position", "absolute")
+        this.svgElement.style.setProperty("left", "0")
+        this.svgElement.style.setProperty("top", "0")
+        this.svgElement.style.setProperty("overflow", "visible")
+
+        this.svgElement.appendChild(this.lineElement)
+        this.appendChild(this.svgElement)
     }
 
     onConnect() {
@@ -110,31 +132,5 @@ export class EdgeElement extends CanvasItemElement {
         this.recalculateCanvas()
         this.recalculateFromTo()
         this.recreateSvgElement()
-
-        const fromNode = canvas.nodeElements[this.getAttribute("node-from")]
-        const fromSide = this.getAttribute("node-from-side")
-        const [x1, y1] = fromNode.getCenterCoordinatesOfSide(fromSide)
-
-        const toNode = canvas.nodeElements[this.getAttribute("node-to")]
-        const toSide = this.getAttribute("node-to-side")
-        const [x2, y2] = toNode.getCenterCoordinatesOfSide(toSide)
-
-        this.svgSlotted = document.createElementNS("http://www.w3.org/2000/svg", "svg")
-        this.svgSlotted.slot = "edge-svg"
-        this.svgSlotted.style.setProperty("position", "absolute")
-        this.svgSlotted.style.setProperty("left", "0")
-        this.svgSlotted.style.setProperty("top", "0")
-        this.svgSlotted.style.setProperty("overflow", "visible")
-
-        this.lineElement = document.createElementNS("http://www.w3.org/2000/svg", "line")
-        this.lineElement.setAttribute("x1", x1)
-        this.lineElement.setAttribute("y1", y1)
-        this.lineElement.setAttribute("x2", x2)
-        this.lineElement.setAttribute("y2", y2)
-        this.lineElement.style.setProperty("stroke", this.constructor.colorToCSS(this.getAttribute("color")))
-        this.lineElement.style.setProperty("stroke-width", "var(--edge-width)")
-
-        this.svgSlotted.appendChild(this.lineElement)
-        this.appendChild(this.svgSlotted)
     }
 }

@@ -1,7 +1,12 @@
-export function filePath(file) {
+/**
+ * Compute a file path, resolving `.` and `..`.
+ * @param path The file path.
+ * @returns {string[]} Array of directories from the root of the path to the target location.
+ */
+export function filePath(path) {
     const stack = []
 
-    for(const part of file.split("/")) {
+    for(const part of path.split("/")) {
         if(part === ".") {
             // noinspection UnnecessaryContinueJS
             continue

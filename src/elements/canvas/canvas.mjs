@@ -14,43 +14,43 @@ export class CanvasElement extends CustomElement {
      * The contents of the Canvas, as they were the last time they were updated.
      * @type {string}
      */
-    #contents
+    #document
 
     /**
      * The contents of the Canvas, as they were the last time they were updated.
      * @returns {string} The raw contents.
      */
-    get contents() {
-        return this.#contents
+    get document() {
+        return this.#document
     }
 
     /**
      * The parsed contents of the Canvas, as they were the last time they were updated.
      * @type {Object}
      */
-    #parsedContents
+    #parsedDocument
 
     /**
      * The parsed contents of the Canvas, as they were the last time they were updated.
      * @returns {Object} The parsed contents.
      */
-    get parsedContents() {
-        return this.#parsedContents
+    get parsedDocument() {
+        return this.#parsedDocument
     }
 
     /**
-     * Update the values of {@link contents} and {@link parsedContents} from the `contents` attribute of the element.
+     * Update the values of {@link document} and {@link parsedDocument} from the `document` attribute of the element.
      * @throws SyntaxError If `contents` is not valid JSON.
      */
     recalculateContents() {
-        this.#contents = this.getAttribute("contents")
-        this.#parsedContents = JSON.parse(this.#contents)
+        this.#document = this.getAttribute("contents")
+        this.#parsedDocument = JSON.parse(this.#document)
     }
 
     /**
      * The minimum X node found in the items of this Canvas.
      * Used to compute this element's rect.
-     * Can be computed from {@link contents} with {@link recalculateMinMax}.
+     * Can be computed from {@link document} with {@link recalculateMinMax}.
      * @type {{x: number, width: number}}
      */
     minX
@@ -58,7 +58,7 @@ export class CanvasElement extends CustomElement {
     /**
      * The minimum Y node found in the items of this Canvas.
      * Used to compute this element's rect.
-     * Can be computed from {@link contents} with {@link recalculateMinMax}.
+     * Can be computed from {@link document} with {@link recalculateMinMax}.
      * @type {{y: number, height: number}}
      */
     minY
@@ -66,7 +66,7 @@ export class CanvasElement extends CustomElement {
     /**
      * The maximum X node found in the items of this Canvas.
      * Used to compute this element's rect.
-     * Can be computed from {@link contents} with {@link recalculateMinMax}.
+     * Can be computed from {@link document} with {@link recalculateMinMax}.
      * @type {{x: number, width: number}}
      */
     maxX
@@ -74,13 +74,13 @@ export class CanvasElement extends CustomElement {
     /**
      * The maximum Y node found in the items of this Canvas.
      * Used to compute this element's rect.
-     * Can be computed from {@link contents} with {@link recalculateMinMax}.
+     * Can be computed from {@link document} with {@link recalculateMinMax}.
      * @type {{y: number, height: number}}
      */
     maxY
 
     /**
-     * Compute {@link minX}, {@link minY}, {@link maxX}, {@link maxY} from {@link contents}.
+     * Compute {@link minX}, {@link minY}, {@link maxX}, {@link maxY} from {@link document}.
      * @returns {void}
      */
     recalculateMinMax() {
@@ -90,7 +90,7 @@ export class CanvasElement extends CustomElement {
         this.maxX = { x: -Infinity, width: 0 }
         this.maxY = { y: -Infinity, height: 0 }
         // Iterate over nodes.
-        for(const node of this.parsedContents["nodes"]) {
+        for(const node of this.parsedDocument["nodes"]) {
             // Convert node values from strings to numbers.
             let {x, y, width, height} = node
             x, y, width, height = Number(x), Number(y), Number(width), Number(height)
@@ -142,7 +142,7 @@ export class CanvasElement extends CustomElement {
     static NODE_ELEMENT_NAME_PREFIX = "x-node-"
 
     /**
-     * Destroy and recreate the {@link nodesContainer} with the current {@link parsedContents}, {@link minX}, {@link minY}, {@link maxX}, {@link maxY}.
+     * Destroy and recreate the {@link nodesContainer} with the current {@link parsedDocument}, {@link minX}, {@link minY}, {@link maxX}, {@link maxY}.
      * @returns {void}
      */
     recreateNodes() {
@@ -154,7 +154,7 @@ export class CanvasElement extends CustomElement {
         this.nodesContainer = document.createElement("div")
         this.nodesContainer.slot = this.constructor.NODES_SLOT_NAME
 
-        for(const node of this.parsedContents["nodes"]) {
+        for(const node of this.parsedDocument["nodes"]) {
             let {id, type, color, x, y, width, height} = node
             x, y, width, height = Number(x), Number(y), Number(width), Number(height)
 
@@ -228,7 +228,7 @@ export class CanvasElement extends CustomElement {
     static EDGE_ELEMENT_NAME = "x-edge"
 
     /**
-     * Destroy and recreate the {@link edgesContainer} with the current {@link parsedContents}, {@link minX}, {@link minY}, {@link maxX}, {@link maxY}.
+     * Destroy and recreate the {@link edgesContainer} with the current {@link parsedDocument}, {@link minX}, {@link minY}, {@link maxX}, {@link maxY}.
      * @returns {void}
      */
     recreateEdges() {
@@ -240,7 +240,7 @@ export class CanvasElement extends CustomElement {
         this.edgesContainer = document.createElement("div")
         this.edgesContainer.slot = this.constructor.EDGES_SLOT_NAME
 
-        for(const edge of this.parsedContents["edges"]) {
+        for(const edge of this.parsedDocument["edges"]) {
             let {id, fromNode, fromSide, toNode, toSide, color, toEnd: arrows} = edge
 
             const element = document.createElement(this.constructor.EDGE_ELEMENT_NAME)
@@ -263,6 +263,7 @@ export class CanvasElement extends CustomElement {
     }
 
     onConnect() {
+        super.onConnect()
         this.recalculateContents()
         this.recalculateMinMax()
         this.recreateNodes()

@@ -41,12 +41,10 @@ export class CustomElement extends HTMLElement {
      * Callback automatically called when this element is added to the DOM.
      */
     connectedCallback() {
-        // The template to duplicate.
-        const template = this.constructor.getTemplate()
         // The shadow root, the inner contents of the element..
         const shadow = this.attachShadow({ mode: "open" })
         // The element contained inside the shadow root..
-        this.#instance = template.content.cloneNode(true)
+        this.#instance = this.constructor.template.content.cloneNode(true)
         // Call the custom callback.
         this.onConnect()
         // Add the instance to the DOM.

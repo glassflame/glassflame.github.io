@@ -1,12 +1,20 @@
 import { Marked } from "https://unpkg.com/marked@9.1.2/lib/marked.esm.js";
-import { CustomElement } from "./base.mjs";
+import { CustomElement } from "../base.mjs";
 
 
 /**
  * Element rendering the Markdown contents of an Obsidian page.
  */
 export class MarkdownElement extends CustomElement {
-    static marked = new Marked({
+    static get template() {
+        return document.getElementById("template-markdown")
+    }
+
+    /**
+     * {@link Marked} Markdown renderer.
+     * @type {Marked}
+     */
+    static MARKED = new Marked({
         extensions: [
             {
                 name: "frontmatter",
@@ -26,7 +34,8 @@ export class MarkdownElement extends CustomElement {
                     }
                 },
                 renderer(token) {
-                    return `<x-frontmatter><code slot="frontmatter-contents" lang="${token.lang}">${token.data}</code></x-frontmatter>`;
+                    // TODO: Doesn't this break if token.data contains quotes?
+                    return `<x-frontmatter lang="${token.lang}" data="${token.data}"></x-frontmatter>`;
                 }
             },
             {
@@ -41,13 +50,13 @@ export class MarkdownElement extends CustomElement {
                         return {
                             type: "wikilink",
                             raw: match[0],
-                            wref: match[1],
+                            target: match[1],
                             text: match[2],
                         }
                     }
                 },
                 renderer(token) {
-                    return `<x-wikilink wref="${token.wref}"><span slot="wikilink-text">${token.text ?? token.wref}</span></x-wikilink>`
+                    return `<x-wikilink target="${token.target}" text="${token.text}"></x-wikilink>`
                 },
             },
             {
@@ -67,61 +76,50 @@ export class MarkdownElement extends CustomElement {
                     }
                 },
                 renderer(token) {
-                    return `<x-hashtag><span slot="hashtag-text">#${token.tag}</span></x-hashtag>`
+                    return `<x-hashtag tag="${token.tag}"></x-hashtag>`
                 }
             }
         ]
     })
 
-    contentsElement
+    /**
+     * Markdown source of the document to render, obtained from the `document` attribute.
+     * @returns {string}
+     */
+    get markdownDocument() {
+        return this.getAttribute("document")
+    }
 
-    static getTemplate() {
-        return document.getElementById("template-markdown")
+    /**
+     * Element containing the rendered Markdown source.
+     * Can be recreated with {@link recreateDocumentElement}.
+     * @type {HTMLDivElement}
+     */
+    documentElement
+
+    /**
+     * The name of the slot where {@link documentElement} should be placed in.
+     * @type {string}
+     */
+    static DOCUMENT_ELEMENT_SLOT = "markdown-document"
+
+    /**
+     * Recreate {@link documentElement} using the current value of {@link markdownDocument}.
+     */
+    recreateDocumentElement() {
+        if(this.documentElement) {
+            this.documentElement.remove()
+            this.documentElement = null
+        }
+
+        this.documentElement = document.createElement("div")
+        this.documentElement.slot = this.constructor.DOCUMENT_ELEMENT_SLOT
+        this.documentElement.innerHTML = this.constructor.MARKED.parse(this.markdownDocument)
+        this.appendChild(this.documentElement)
     }
 
     onConnect() {
-        const markdown = this.getAttribute("contents")
-
-        this.contentsElement = document.createElement("div")
-        this.contentsElement.setAttribute("slot", "markdown-contents")
-        this.contentsElement.innerHTML = MarkdownElement.marked.parse(markdown)
-
-        this.appendChild(this.contentsElement)
-    }
-}
-
-/**
- * Element rendering Obsidian front matter.
- */
-export class FrontMatterElement extends CustomElement {
-    static getTemplate() {
-        return document.getElementById("template-frontmatter")
-    }
-}
-
-/**
- * Element rendering an Obsidian Hashtag.
- */
-export class HashtagElement extends CustomElement {
-    static getTemplate() {
-        return document.getElementById("template-hashtag")
-    }
-}
-
-/**
- * Element rendering an Obsidian Wikilink.
- */
-export class WikilinkElement extends CustomElement {
-    static getTemplate() {
-        return document.getElementById("template-wikilink")
-    }
-
-    onConnect() {
-        const instanceElement = this.instance.querySelector(".wikilink")
-
-        const destinationURL = new URL(window.location)
-        destinationURL.hash = this.getAttribute("wref")
-
-        instanceElement.href = destinationURL
+        super.onConnect()
+        this.recreateDocumentElement()
     }
 }

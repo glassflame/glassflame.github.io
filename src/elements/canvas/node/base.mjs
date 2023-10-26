@@ -1,4 +1,4 @@
-import { CanvasItemElement } from "src/elements/canvas/canvasitem.mjs";
+import { CanvasItemElement } from "../canvasitem.mjs";
 
 
 /**

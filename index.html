@@ -4,6 +4,9 @@
 		<meta charset="utf-8" />
 		<title>WIP: Obsiview</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Interaction scripts -->
+		<script type="module" src="src/index.mjs"></script>
+		<!-- Global style -->
 		<style>
 			@import "style/light.css";
 			@import "style/dark.css";
@@ -35,103 +38,14 @@
 				color: var(--color-foreground);
 			}
 		</style>
-		<script type="module" src="src/index.mjs"></script>
-		<template id="template-display">
-			<slot name="display-container">{Displayed content}</slot>
-		</template>
-		<template id="template-node-group">
+		<!-- Templates -->
+		<template id="template-vault">
 			<style>
-				.node-group {
-					outline: var(--node-group-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
-					border-radius: 0 8px 8px 8px;
-					padding: 12px;
-				}
 
-				.node-group-label {
-					position: relative;
-					bottom: 14px;
-					left: -12px;
-					transform: translateY(-100%);
-
-					display: inline-block;
-
-					outline: var(--node-group-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
-					border-radius: 8px 8px 0 0;
-					padding: 12px;
-				}
-
-				.node-group-label h1 {
-					margin: 0;
-				}
 			</style>
-			<aside class="canvas-item node node-group">
-				<h1><slot name="node-group-label">{Group label}</slot></h1>
-			</aside>
-		</template>
-		<template id="template-node-file">
-			<style>
-				.node-file {
-					position: absolute;
-					box-sizing: border-box;
-
-					--color-node: var(--color-gray);
-					outline: var(--node-file-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
-					border-radius: 8px;
-					padding: 12px;
-
-					overflow-x: clip;
-					overflow-y: scroll;
-				}
-
-				.node-file-title {
-					font-size: 2em;
-					margin-block-start: .67em;
-					margin-block-end: .67em;
-				}
-			</style>
-			<article class="node-file">
-				<h1 class="node-file-title">
-					<slot name="node-title">{Node title}</slot>
-				</h1>
-				<slot name="node-contents">{Node contents}</slot>
-			</article>
-		</template>
-		<template id="template-node-text">
-			<style>
-				.node-text {
-					position: absolute;
-					box-sizing: border-box;
-
-					--color-node: var(--color-gray);
-					outline: var(--node-file-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
-					border-radius: 8px;
-					padding: 12px;
-
-					overflow-x: clip;
-					overflow-y: scroll;
-				}
-			</style>
-			<article class="node-text">
-				<slot name="node-contents">{Node contents}</slot>
-			</article>
-		</template>
-		<template id="template-edge">
-			<slot name="edge-svg">{Edge SVG}</slot>
-		</template>
-		<template id="template-markdown">
-			<slot name="markdown-contents">{Markdown text}</slot>
-		</template>
-		<template id="template-frontmatter">
-			<style>
-				.frontmatter {
-					opacity: 50%;
-				}
-			</style>
-			<pre class="frontmatter"><slot name="frontmatter-contents">{Markdown text}</slot></pre>
+			<div class="vault">
+				<slot name="vault-child"></slot>
+			</div>
 		</template>
 		<template id="template-canvas">
 			<style>
@@ -162,15 +76,115 @@
 				<slot name="canvas-nodes">{Canvas nodes}</slot>
 			</div>
 		</template>
-		<template id="template-wikilink">
+		<template id="template-display">
+			<slot name="display-container">{Displayed content}</slot>
+		</template>
+		<template id="template-node-group">
 			<style>
-				.wikilink {
-					color: var(--color-accent);
-					text-decoration: underline 1px solid currentColor;
-					cursor: pointer;
+				.node {
+					outline: var(--node-group-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
+					border-radius: 0 8px 8px 8px;
+					padding: 12px;
+				}
+
+				.node-group-label {
+					position: relative;
+					bottom: 14px;
+					left: -12px;
+					transform: translateY(-100%);
+
+					display: inline-block;
+
+					outline: var(--node-group-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
+					border-radius: 8px 8px 0 0;
+					padding: 12px;
+				}
+
+				.node-group-label-title {
+					margin: 0;
 				}
 			</style>
-			<a class="wikilink"><slot name="wikilink-text">{Wikilink text}</slot></a>
+			<div class="canvas-item node node-group">
+				<aside class="node-group-label">
+					<h1 class="node-group-label-title"><slot name="node-group-label">{Group label}</slot></h1>
+				</aside>
+			</div>
+		</template>
+		<template id="template-node-file">
+			<style>
+				.node {
+					outline: var(--node-file-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
+					border-radius: 8px;
+					padding: 12px;
+				}
+
+				.node-file {
+					overflow-x: clip;
+					overflow-y: scroll;
+				}
+
+				.node-file-label {
+					font-size: 2em;
+					margin-block-start: .67em;
+					margin-block-end: .67em;
+				}
+			</style>
+			<article class="canvas-item node node-file">
+				<h1 class="node-file-label">
+					<slot name="node-file-label">{Node title}</slot>
+				</h1>
+				<slot name="node-file-contents">{Node contents}</slot>
+			</article>
+		</template>
+		<template id="template-node-text">
+			<style>
+				.node {
+					outline: var(--node-file-border-width) solid var(--color-node);
+					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
+					border-radius: 8px;
+					padding: 12px;
+				}
+
+				.node-text {
+					overflow-x: clip;
+					overflow-y: scroll;
+				}
+			</style>
+			<article class="canvas-item node node-text">
+				<slot name="node-text-contents">{Node contents}</slot>
+			</article>
+		</template>
+		<template id="template-edge">
+			<style>
+				.edge svg line {
+					stroke: var(--color-node);
+					stroke-width: var(--edge-width);
+				}
+			</style>
+			<div class="edge">
+				<slot name="edge-svg">{Edge SVG}</slot>
+			</div>
+		</template>
+		<template id="template-markdown">
+			<style>
+				.markdown
+			</style>
+			<div class="markdown">
+				<slot name="markdown-document">{Markdown text}</slot>
+			</div>
+		</template>
+		<template id="template-frontmatter">
+			<style>
+				.frontmatter {
+					opacity: 50%;
+				}
+			</style>
+			<div class="frontmatter">
+				<slot name="frontmatter-contents">{Markdown text}</slot>
+			</div>
 		</template>
 		<template id="template-hashtag">
 			<style>
@@ -179,7 +193,17 @@
 					color: var(--color-accent);
 				}
 			</style>
-			<span class="hashtag"><slot name="hashtag-text">{#Hashtag}</slot></span>
+			<span class="hashtag"><slot name="hashtag-tag">{#Hashtag}</slot></span>
+		</template>
+		<template id="template-wikilink">
+			<style>
+				.wikilink {
+					color: var(--color-accent);
+					text-decoration: underline 1px solid currentColor;
+					cursor: pointer;
+				}
+			</style>
+			<a class="wikilink"><slot name="wikilink-anchor">{Wikilink text}</slot></a>
 		</template>
 	</head>
 	<body>
