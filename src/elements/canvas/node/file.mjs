@@ -1,7 +1,6 @@
 import { NodeElement } from "./base.mjs";
 import { DisplayElement } from "../../display.mjs";
 import { fileDetails } from "../../../utils/file.mjs";
-import { findFirstAncestor } from "../../../utils/trasversal.mjs";
 
 
 export class NodeFileElement extends NodeElement {
