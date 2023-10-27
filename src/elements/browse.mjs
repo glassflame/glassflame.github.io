@@ -1,3 +1,5 @@
+import {fileDetails} from "../utils/file.mjs";
+
 /**
  * The body element for the pages viewer, handling most low-level things.
  */
@@ -41,6 +43,12 @@ export class BrowseElement extends HTMLBodyElement {
     vaultElement
 
     /**
+     * The title of the page.
+     * @type {HTMLHeadingElement}
+     */
+    titleElement
+
+    /**
      * The display element showing the contents of the specified file.
      * @type {DisplayElement}
      */
@@ -55,6 +63,11 @@ export class BrowseElement extends HTMLBodyElement {
             this.vaultElement = null
             this.rootDisplayElement = null
         }
+
+        const {name} = fileDetails(this.parameters.path)
+        this.titleElement = document.createElement("h1")
+        this.titleElement.innerText = name
+        this.appendChild(this.titleElement)
 
         this.vaultElement = document.createElement("x-vault")
         this.vaultElement.base = this.parameters.vault

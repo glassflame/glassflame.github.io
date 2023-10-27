@@ -28,7 +28,7 @@ export function fileDetails(file) {
     const nameExtension = path.at(-1)
 
     const split2 = nameExtension.split(".")
-    const name = split2.slice(0, -1)
+    const name = split2.slice(0, -1).join("")
     const extension = split2.at(-1)
 
     return {path, directory, name, extension}

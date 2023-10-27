@@ -12,20 +12,34 @@
     --color-purple: #A882FF;
 
     --color-node: var(--color-gray);
-
-    --edge-width: 2px;
     --node-group-border-width: 2px;
     --node-file-border-width: 2px;
+    --edge-width: 2px;
+    --font-text: sans-serif;
+    --font-mono: monospace;
 }
 
 body {
     margin: 0;
-    padding: 128px;
     width: max-content;
+    min-width: 100svw;
     height: max-content;
 
     background-color: var(--color-background);
     color: var(--color-foreground);
+}
+
+body > h1 {
+    text-align: center;
+    font-size: 4em;
+}
+
+* {
+    font-family: var(--font-text);
+}
+
+code {
+    font-family: var(--font-mono);
 }
 
 a {

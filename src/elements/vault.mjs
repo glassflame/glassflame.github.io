@@ -59,9 +59,7 @@ export class VaultElement extends CustomElement {
     async fetchQueueTurn() {
         return new Promise(resolve => {
             this.#fetchQueue.push(resolve)
-            console.debug("[Fetch queue] Waiting for my turn...")
             if(this.#somethingInFetchQueue !== null) {
-                console.debug("[Fetch queue] Asking scheduler to resume...")
                 this.#somethingInFetchQueue(undefined)
                 this.#somethingInFetchQueue = null
             }
@@ -74,18 +72,14 @@ export class VaultElement extends CustomElement {
      */
     async #fetchQueueScheduler() {
         while(this.isConnected) {
-            console.debug("[Fetch scheduler] Scheduler running one iteration...")
             if(this.#fetchQueue.length === 0) {
                 const somethingInFetchQueue = new Promise(resolve => {
                     this.#somethingInFetchQueue = resolve
-                    console.debug("[Fetch scheduler] Nothing to do, waiting...")
                 })
                 await somethingInFetchQueue
             }
             const promise = this.#fetchQueue.shift()
-            console.debug("[Fetch scheduler] Advancing...")
             promise()
-            console.debug("[Fetch scheduler] Cooling down for:", this.cooldownMs)
             await sleep(this.cooldownMs)
         }
     }
@@ -105,10 +99,58 @@ export class VaultElement extends CustomElement {
         return result
     }
 
+    /**
+     * The CSS selector of the element in the template containing the vault.
+     * @type {string}
+     */
+    static VAULT_SELECTOR = ".vault"
+
+    /**
+     * The element in the instance representing the vault.
+     * Can be set via {@link recalculateVaultElement}.
+     * @type {HTMLElement}
+     */
+    vaultElement
+
+    /**
+     * Update the value of the {@link vaultElement} by querying the current {@link instance} with {@link VAULT_SELECTOR}.
+     */
+    recalculateVaultElement() {
+        this.vaultElement = this.instance.querySelector(this.constructor.VAULT_SELECTOR)
+    }
+
+
+    /**
+     * The accent color of this vault.
+     * Can be set manually, or updated via {@link refetchAppearance}.
+     * @type {string}
+     */
+    get accentColor() {
+        return this.vaultElement.style.getPropertyValue("--color-accent")
+    }
+    set accentColor(value) {
+        this.vaultElement.style.setProperty("--color-accent", value)
+    }
+
+    /**
+     * Update {@link accentColor} using {@link fetchCooldown} on `.obsidian/appearance.json`.
+     * @return {Promise<void>}
+     */
+    async refetchAppearance() {
+        const response = await this.fetchCooldown(".obsidian/appearance.json")
+        const appearance = await response.json()
+        const accentColor = appearance.accentColor
+        if(accentColor.match(/^#[0-9A-F]{3}$|^#[0-9A-F]{6}$/i)) {
+            this.accentColor = accentColor
+        }
+    }
+
     onConnect() {
         super.onConnect()
-
+        this.recalculateVaultElement()
         // noinspection JSIgnoredPromiseFromCall
         this.#fetchQueueScheduler()
+        // noinspection JSIgnoredPromiseFromCall
+        this.refetchAppearance()
     }
 }
