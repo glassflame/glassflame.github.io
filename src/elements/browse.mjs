@@ -1,4 +1,4 @@
-import {fileDetails} from "../utils/file.mjs";
+import {fileDetails, filePath} from "../utils/file.mjs";
 
 /**
  * The body element for the pages viewer, handling most low-level things.
@@ -32,6 +32,21 @@ export class BrowseElement extends HTMLBodyElement {
         url.search = params.toString()
         url.hash = highlight
         return url
+    }
+
+    urlName(name) {
+        if(name.startsWith(".")) {
+            const path = filePath(name).join("/")
+            return this.urlFor({path})
+        }
+        else if(!name.includes("/")) {
+            const path = `${fileDetails(this.parameters.path).directory}/${name}.md`
+            return this.urlFor({path})
+        }
+        else {
+            const path = filePath(name).join("/")
+            return this.urlFor({path})
+        }
     }
 
     // TODO: Add a landing page

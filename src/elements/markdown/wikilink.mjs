@@ -69,7 +69,7 @@ export class WikilinkElement extends CustomElement {
     }
 
     resetAnchorElementProperties() {
-        this.anchorElement.href = this.browseElement.urlFor({path: this.target})
+        this.anchorElement.href = this.browseElement.urlName(this.target)
         this.anchorElement.innerText = this.text
     }
 
