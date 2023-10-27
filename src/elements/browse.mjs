@@ -21,6 +21,17 @@ export class BrowseElement extends HTMLBodyElement {
         this.parameters = {vault, path, highlight}
     }
 
+    urlFor({vault = this.parameters.vault, path = this.parameters.path, highlight = this.parameters.highlight}) {
+        const location = window.location
+        const params = new URLSearchParams(location.search)
+        params.set("vault", vault)
+        params.set("path", path)
+        const url = new URL(location)
+        url.search = params.toString()
+        url.hash = highlight
+        return url
+    }
+
     // TODO: Add a landing page
 
     /**
@@ -47,7 +58,7 @@ export class BrowseElement extends HTMLBodyElement {
 
         this.vaultElement = document.createElement("x-vault")
         this.vaultElement.base = this.parameters.vault
-        this.vaultElement.cooldownMs = 200
+        this.vaultElement.cooldownMs = 0
 
         this.rootDisplayElement = document.createElement("x-display")
         this.rootDisplayElement.path = this.parameters.path

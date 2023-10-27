@@ -196,7 +196,7 @@ export class CanvasElement extends CustomElement {
 
         this.nodesContainer.style["width"] = `${this.maxX.x + this.maxX.width - this.minX.x}px`
         this.nodesContainer.style["height"] = `${this.maxY.y + this.maxY.height - this.minY.y}px`
-        this.nodesContainer.style["position"] = "relative"
+        this.nodesContainer.style["position"] = "absolute"
 
         this.appendChild(this.nodesContainer)
     }
@@ -220,7 +220,7 @@ export class CanvasElement extends CustomElement {
     static EDGES_SLOT_NAME = "canvas-edges"
 
     /**
-     * Prefix to the name of the element to create for each edge.
+     * Name of the element to create for each edge.
      * @type {string}
      */
     static EDGE_ELEMENT_NAME = "x-edge"
@@ -242,7 +242,6 @@ export class CanvasElement extends CustomElement {
             let {id, fromNode, fromSide, toNode, toSide, color, toEnd: arrows} = edge
 
             const element = document.createElement(this.constructor.EDGE_ELEMENT_NAME)
-            element.setAttribute("id", `edge-${id}`)
             element.setAttribute("node-from", fromNode)
             element.setAttribute("node-from-side", fromSide)
             element.setAttribute("node-to", toNode)
@@ -254,9 +253,10 @@ export class CanvasElement extends CustomElement {
             this.edgesContainer.appendChild(element)
         }
 
-        this.edgesContainer.style["width"] = `${this.maxX.x + this.maxX.width - this.minX.x}px`
-        this.edgesContainer.style["height"] = `${this.maxY.y + this.maxY.height - this.minY.y}px`
-        this.edgesContainer.style["position"] = "absolute"
+        this.edgesContainer.style.width = `${this.maxX.x + this.maxX.width - this.minX.x}px`
+        this.edgesContainer.style.height = `${this.maxY.y + this.maxY.height - this.minY.y}px`
+        this.edgesContainer.style.position = "relative"
+        this.edgesContainer.style.pointerEvents = "none"
 
         this.appendChild(this.edgesContainer)
     }

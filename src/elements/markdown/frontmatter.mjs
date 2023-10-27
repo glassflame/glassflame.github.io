@@ -16,12 +16,18 @@ export class FrontMatterElement extends CustomElement {
     get language() {
         return this.getAttribute("lang")
     }
+    set language(value) {
+        this.setAttribute("lang", value)
+    }
 
     /**
      * The text contained in this front matter, obtained from the `data` attribute.
      */
     get data() {
         return this.getAttribute("data")
+    }
+    set data(value) {
+        this.setAttribute("data", value)
     }
 
     /**

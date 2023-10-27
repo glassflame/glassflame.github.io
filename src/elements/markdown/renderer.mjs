@@ -35,7 +35,7 @@ export class MarkdownElement extends CustomElement {
                 },
                 renderer(token) {
                     // TODO: Doesn't this break if token.data contains quotes?
-                    return `<x-frontmatter lang="${token.lang}" data="${token.data}"></x-frontmatter>`;
+                    return `<x-frontmatter lang="${token.lang}" data="${token.data.replaceAll('"', '&quot;')}"></x-frontmatter>`;
                 }
             },
             {

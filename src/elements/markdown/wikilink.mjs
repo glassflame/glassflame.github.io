@@ -1,4 +1,6 @@
 import { CustomElement } from "../base.mjs";
+import {findFirstAncestor} from "../../utils/trasversal.mjs";
+import {BrowseElement} from "../browse.mjs";
 
 
 /**
@@ -7,6 +9,20 @@ import { CustomElement } from "../base.mjs";
 export class WikilinkElement extends CustomElement {
     static get template() {
         return document.getElementById("template-wikilink")
+    }
+
+    /**
+     * Element handling the page navigation.
+     * @type {BrowseElement}
+     */
+    browseElement
+
+    /**
+     * Recalculate the value of {@link browseElement} using this element's current position in the DOM.
+     * @returns {void}
+     */
+    recalculateBrowseElement() {
+        this.browseElement = findFirstAncestor(this, BrowseElement)
     }
 
     /**
@@ -53,12 +69,13 @@ export class WikilinkElement extends CustomElement {
     }
 
     resetAnchorElementProperties() {
-        this.anchorElement.href = this.target
+        this.anchorElement.href = this.browseElement.urlFor({path: this.target})
         this.anchorElement.innerText = this.text
     }
 
     onConnect() {
         super.onConnect()
+        this.recalculateBrowseElement()
         this.recalculateAnchorElement()
         this.resetAnchorElementProperties()
     }
