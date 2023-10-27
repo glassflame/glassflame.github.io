@@ -30,8 +30,11 @@ export class DisplayElement extends CustomElement {
      * Get the path or name of the file this node points to.
      * @returns {string} The value in question.
      */
-    get target() {
-        return this.getAttribute("target")
+    get path() {
+        return this.getAttribute("path")
+    }
+    set path(value) {
+        return this.setAttribute("path", value)
     }
 
     /**
@@ -84,7 +87,7 @@ export class DisplayElement extends CustomElement {
             this.contentsElement = null
         }
 
-        const {extension} = fileDetails(this.target)
+        const {extension} = fileDetails(this.path)
 
         switch(extension) {
             case "md":
@@ -100,30 +103,30 @@ export class DisplayElement extends CustomElement {
 
         this.contentsElement.setAttribute("document", this.document)
         this.contentsElement.slot = this.constructor.CONTAINER_ELEMENT_SLOT
-        this.appendChild(this.loadingElement)
+        this.appendChild(this.contentsElement)
     }
 
     /**
-     * The plaintext contents of the {@link target} document.
+     * The plaintext contents of the {@link path} document.
      * @type {string}
      */
     document
 
     /**
-     * Reload the {@link target} {@link document}.
+     * Reload the {@link path} {@link document}.
      * @returns {Promise<void>}
      */
     async reloadDocument() {
-        const response = await this.vault.fetchCooldown(this.target)
+        const response = await this.vault.fetchCooldown(this.path)
         // TODO: Add a check that the request was successful
         this.document = await response.text()
     }
 
-    onConnect() {
+    async onConnect() {
         super.onConnect()
         this.recalculateVault()
         this.recreateLoadingElement()
-        // noinspection JSIgnoredPromiseFromCall
-        this.reloadDocument().then(this.recreateContentsElement)
+        await this.reloadDocument()
+        this.recreateContentsElement()
     }
 }

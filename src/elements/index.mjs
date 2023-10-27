@@ -2,3 +2,4 @@ export {CanvasElement, NodeFileElement, NodeGroupElement, NodeTextElement, EdgeE
 export {MarkdownElement, HashtagElement, WikilinkElement, FrontMatterElement} from "./markdown/index.mjs"
 export {DisplayElement} from "./display.mjs"
 export {VaultElement} from "./vault.mjs"
+export {BrowseElement} from "./browse.mjs"

@@ -21,3 +21,8 @@ export class FetchError extends Error {
         this.response = response
     }
 }
+
+/**
+ * A file is maliciously malformed.
+ */
+export class MalformedError extends Error {}

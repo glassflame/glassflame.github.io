@@ -24,12 +24,15 @@
 				--color-blue: #53DFDD;
 				--color-purple: #A882FF;
 
+				--color-node: var(--color-gray);
+
 				--edge-width: 2px;
 				--node-group-border-width: 2px;
 				--node-file-border-width: 2px;
 			}
 
 			body {
+				margin: 0;
 				padding: 128px;
 				width: max-content;
 				height: max-content;
@@ -37,11 +40,18 @@
 				background-color: var(--color-background);
 				color: var(--color-foreground);
 			}
+
+			svg line {
+				stroke: var(--color-node);
+				stroke-width: var(--edge-width);
+			}
 		</style>
 		<!-- Templates -->
 		<template id="template-vault">
 			<style>
+				.vault {
 
+				}
 			</style>
 			<div class="vault">
 				<slot name="vault-child"></slot>
@@ -56,19 +66,6 @@
 
 					width: max-content;
 					height: max-content;
-				}
-
-				.canvas * {
-					left: 0;
-					top: 0;
-				}
-
-				.canvas *:first-child {
-					position: relative;
-				}
-
-				.canvas *:not(:first-child) {
-					position: absolute;
 				}
 			</style>
 			<div class="canvas">
@@ -159,18 +156,19 @@
 		</template>
 		<template id="template-edge">
 			<style>
-				.edge svg line {
-					stroke: var(--color-node);
-					stroke-width: var(--edge-width);
+				.edge {
+
 				}
 			</style>
-			<div class="edge">
+			<div class="canvas-item edge">
 				<slot name="edge-svg">{Edge SVG}</slot>
 			</div>
 		</template>
 		<template id="template-markdown">
 			<style>
-				.markdown
+				.markdown {
+
+				}
 			</style>
 			<div class="markdown">
 				<slot name="markdown-document">{Markdown text}</slot>
@@ -203,9 +201,8 @@
 					cursor: pointer;
 				}
 			</style>
-			<a class="wikilink"><slot name="wikilink-anchor">{Wikilink text}</slot></a>
+			<a class="wikilink"></a>
 		</template>
 	</head>
-	<body>
-	</body>
+	<body is="x-browse"></body>
 </html>

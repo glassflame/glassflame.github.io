@@ -40,10 +40,10 @@ export class CanvasElement extends CustomElement {
 
     /**
      * Update the values of {@link document} and {@link parsedDocument} from the `document` attribute of the element.
-     * @throws SyntaxError If `contents` is not valid JSON.
+     * @throws SyntaxError If `document` is not valid JSON.
      */
-    recalculateContents() {
-        this.#document = this.getAttribute("contents")
+    reparseDocument() {
+        this.#document = this.getAttribute("document")
         this.#parsedDocument = JSON.parse(this.#document)
     }
 
@@ -155,31 +155,28 @@ export class CanvasElement extends CustomElement {
         this.nodesContainer.slot = this.constructor.NODES_SLOT_NAME
 
         for(const node of this.parsedDocument["nodes"]) {
-            let {id, type, color, x, y, width, height} = node
-            x, y, width, height = Number(x), Number(y), Number(width), Number(height)
+            const {id, type, color, x, y, width, height} = node
+            const [nodeX, nodeY, nodeWidth, nodeHeight] = [Number(x), Number(y), Number(width), Number(height)]
 
             const element = document.createElement(`${this.constructor.NODE_ELEMENT_NAME_PREFIX}${type}`)
-
-            element.setAttribute("id", `node-${id}`)
-            element.setAttribute("x", `${x - this.minX.x}`)
-            element.setAttribute("y", `${y - this.minY.y}`)
-            element.setAttribute("width", `${width}`)
-            element.setAttribute("height", `${height}`)
-            if(color) element.setAttribute("color", color)
+            element.x = nodeX - this.minX.x
+            element.y = nodeY - this.minY.y
+            element.width = nodeWidth
+            element.height = nodeHeight
+            if(color) element.obsidianColor = color
 
             this.nodeElementsById[id] = element
 
             switch(type) {
                 case "text":
                     const {text} = node
-                    element.setAttribute("text", text)
+                    element.setAttribute("document", text)
                     break
 
                 case "file":
                     const {file} = node
                     const {name} = fileDetails(file)
-                    element.setAttribute("file", file)
-                    element.setAttribute("file-name", name)
+                    element.setAttribute("path", file)
                     this.nodeElementsByPath[file] = element
                     this.nodeElementsByName[name] = element
                     break
@@ -199,6 +196,7 @@ export class CanvasElement extends CustomElement {
 
         this.nodesContainer.style["width"] = `${this.maxX.x + this.maxX.width - this.minX.x}px`
         this.nodesContainer.style["height"] = `${this.maxY.y + this.maxY.height - this.minY.y}px`
+        this.nodesContainer.style["position"] = "relative"
 
         this.appendChild(this.nodesContainer)
     }
@@ -219,7 +217,7 @@ export class CanvasElement extends CustomElement {
      * Name of the slot where the edge container should be placed.
      * @type {string}
      */
-    static EDGES_SLOT_NAME = "canvas-nodes"
+    static EDGES_SLOT_NAME = "canvas-edges"
 
     /**
      * Prefix to the name of the element to create for each edge.
@@ -258,13 +256,14 @@ export class CanvasElement extends CustomElement {
 
         this.edgesContainer.style["width"] = `${this.maxX.x + this.maxX.width - this.minX.x}px`
         this.edgesContainer.style["height"] = `${this.maxY.y + this.maxY.height - this.minY.y}px`
+        this.edgesContainer.style["position"] = "absolute"
 
         this.appendChild(this.edgesContainer)
     }
 
     onConnect() {
         super.onConnect()
-        this.recalculateContents()
+        this.reparseDocument()
         this.recalculateMinMax()
         this.recreateNodes()
         this.recreateEdges()

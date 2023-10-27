@@ -6,7 +6,7 @@ import { CustomElement } from "../base.mjs";
  */
 export class WikilinkElement extends CustomElement {
     static get template() {
-        return document.getElementById("template-hashtag")
+        return document.getElementById("template-wikilink")
     }
 
     /**
@@ -22,8 +22,20 @@ export class WikilinkElement extends CustomElement {
      * @returns {string} The text in question.
      */
     get text() {
-        return this.getAttribute("text") ?? this.target
+        // TODO: Dirty hack to hide "undefined"
+        const text = this.getAttribute("text")
+        // noinspection EqualityComparisonWithCoercionJS
+        if(text == "undefined") {
+            return this.target
+        }
+        return text
     }
+
+    /**
+     * The CSS selector of the anchor element.
+     * @type {string}
+     */
+    static ANCHOR_SELECTOR = "a.wikilink"
 
     /**
      * The element displaying the wikilink.
@@ -33,30 +45,21 @@ export class WikilinkElement extends CustomElement {
     anchorElement
 
     /**
-     * The name of the slot where {@link anchorElement} should be placed in.
-     * @type {string}
-     */
-    static ANCHOR_ELEMENT_SLOT = "wikilink-anchor"
-
-    /**
-     * Recreate {@link anchorElement} with the current value of {@link target} and {@link text}.
+     Update the value of the {@link canvasItemElement} by querying the current {@link instance} with {@link ANCHOR_SELECTOR}.
      * @returns {void}
      */
-    recreateTagElement() {
-        if(this.anchorElement) {
-            this.anchorElement.remove()
-            this.anchorElement = null
-        }
+    recalculateAnchorElement() {
+        this.anchorElement = this.instance.querySelector(this.constructor.ANCHOR_SELECTOR)
+    }
 
-        this.anchorElement = document.createElement("a")
-        this.anchorElement.slot = this.constructor.ANCHOR_ELEMENT_SLOT
-        this.anchorElement.href = "#"  // TODO: Add href behaviour to the anchor.
+    resetAnchorElementProperties() {
+        this.anchorElement.href = this.target
         this.anchorElement.innerText = this.text
-        this.appendChild(this.anchorElement)
     }
 
     onConnect() {
         super.onConnect()
-        this.recreateTagElement()
+        this.recalculateAnchorElement()
+        this.resetAnchorElementProperties()
     }
 }

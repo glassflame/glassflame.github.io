@@ -76,8 +76,7 @@ export class NodeFileElement extends NodeElement {
 
         this.contentsElement = document.createElement("x-display")
         this.contentsElement.slot = this.constructor.CONTENTS_ELEMENT_SLOT
-        this.contentsElement.setAttribute("vault", findFirstAncestor(this, DisplayElement).vault)  // TODO: Add a vault attribute to DisplayElement
-        this.contentsElement.setAttribute("path", this.pathRelativeToVault)  // TODO: Add a path attribute to DisplayElement
+        this.contentsElement.path = this.pathRelativeToVault
         this.appendChild(this.contentsElement)
     }
 
