@@ -8,6 +8,10 @@ export class NodeFileElement extends NodeElement {
         return document.getElementById("template-node-file")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * Get the path of the file displayed by this node, relative to the root of the vault, from the `path` attribute.
      * @returns {string} The path.

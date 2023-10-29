@@ -10,6 +10,10 @@ export class NodeGroupElement extends NodeElement {
         return document.getElementById("template-node-group")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * The label text of the group.
      * Obtained from the `label` attribute of the element.

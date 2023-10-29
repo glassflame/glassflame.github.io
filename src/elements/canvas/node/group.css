@@ -1,0 +1,17 @@
+.node-group-label {
+    position: relative;
+    bottom: 14px;
+    left: -12px;
+    transform: translateY(-100%);
+
+    display: inline-block;
+
+    outline: var(--node-group-border-width) solid var(--color-node);
+    background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
+    border-radius: 8px 8px 0 0;
+    padding: 12px;
+}
+
+.node-group-label-title {
+    margin: 0;
+}

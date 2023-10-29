@@ -14,6 +14,10 @@ export class WikilinkElement extends CustomElement {
         return document.getElementById("template-wikilink")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * Element displaying the this one.
      * Can be recalculated with {@link recalculateAncestors}.

@@ -7,6 +7,10 @@ import {MalformedError} from "../../utils/errors.mjs";
  * @abstract
  */
 export class CanvasItemElement extends CustomElement {
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * @returns {number} The X coordinate of the top left vertex of this element.
      */

@@ -10,6 +10,10 @@ export class MarkdownElement extends CustomElement {
         return document.getElementById("template-markdown")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * {@link Marked} Markdown renderer.
      * @type {Marked}

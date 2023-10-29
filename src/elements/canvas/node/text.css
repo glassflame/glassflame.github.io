@@ -1,0 +1,4 @@
+.node-text {
+    overflow-x: clip;
+    overflow-y: scroll;
+}

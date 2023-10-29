@@ -1,0 +1,5 @@
+.wikilink {
+    color: var(--color-accent);
+    text-decoration: underline 1px solid currentColor;
+    cursor: pointer;
+}

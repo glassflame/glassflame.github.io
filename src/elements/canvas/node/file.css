@@ -1,0 +1,10 @@
+.node-file {
+    overflow-x: clip;
+    overflow-y: scroll;
+}
+
+.node-file-label {
+    font-size: 2em;
+    margin-block-start: .67em;
+    margin-block-end: .67em;
+}

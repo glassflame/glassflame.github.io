@@ -10,6 +10,10 @@ export class CanvasElement extends CustomElement {
         return document.getElementById("template-canvas")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * The contents of the Canvas, as they were the last time they were updated.
      * @type {string}

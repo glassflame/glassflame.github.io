@@ -1,0 +1,6 @@
+.node {
+    outline: var(--node-group-border-width) solid var(--color-node);
+    background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
+    border-radius: 0 8px 8px 8px;
+    padding: 12px;
+}

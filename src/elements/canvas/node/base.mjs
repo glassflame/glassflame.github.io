@@ -6,6 +6,10 @@ import { CanvasItemElement } from "../canvasitem.mjs";
  * @abstract
  */
 export class NodeElement extends CanvasItemElement {
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * Coordinates of the point where edges connected to the top of this node should attach to.
      * @type {[number, number]}

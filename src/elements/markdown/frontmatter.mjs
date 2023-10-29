@@ -9,6 +9,10 @@ export class FrontMatterElement extends CustomElement {
         return document.getElementById("template-frontmatter")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * The programming language used to define this front matter, obtained from the `lang` attribute.
      * @type {string}

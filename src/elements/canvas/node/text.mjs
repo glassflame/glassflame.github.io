@@ -9,6 +9,10 @@ export class NodeTextElement extends NodeElement {
         return document.getElementById("template-node-text")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * Get the Markdown source of this node from the `document` attribute.
      */

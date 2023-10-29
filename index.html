@@ -7,37 +7,16 @@
 		<!-- Interaction scripts -->
 		<script type="module" src="src/index.mjs"></script>
 		<!-- Global style -->
-		<style>
-			@import "style/base.css";
-			@import "style/light.css";
-			@import "style/dark.css";
-		</style>
+		<link rel="stylesheet" type="text/css" href="style/base.css">
+		<link rel="stylesheet" type="text/css" href="style/light.css">
+		<link rel="stylesheet" type="text/css" href="style/dark.css">
 		<!-- Templates -->
 		<template id="template-vault">
-			<style>
-				.vault {
-					margin-left: 64px;
-					margin-right: 64px;
-				}
-			</style>
 			<div class="vault">
 				<slot name="vault-child"></slot>
 			</div>
 		</template>
 		<template id="template-canvas">
-			<style>
-				.canvas {
-					position: relative;
-
-					display: flex;
-
-					width: max-content;
-					height: max-content;
-
-					margin-top: 64px;
-					margin-bottom: 64px;
-				}
-			</style>
 			<div class="canvas">
 				<slot name="canvas-nodes">{Canvas nodes}</slot>
 				<slot name="canvas-edges">{Canvas edges}</slot>
@@ -47,32 +26,6 @@
 			<slot name="display-container">{Displayed content}</slot>
 		</template>
 		<template id="template-node-group">
-			<style>
-				.node {
-					outline: var(--node-group-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
-					border-radius: 0 8px 8px 8px;
-					padding: 12px;
-				}
-
-				.node-group-label {
-					position: relative;
-					bottom: 14px;
-					left: -12px;
-					transform: translateY(-100%);
-
-					display: inline-block;
-
-					outline: var(--node-group-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 20%, var(--color-background));
-					border-radius: 8px 8px 0 0;
-					padding: 12px;
-				}
-
-				.node-group-label-title {
-					margin: 0;
-				}
-			</style>
 			<div class="canvas-item node node-group">
 				<aside class="node-group-label">
 					<h1 class="node-group-label-title"><slot name="node-group-label">{Group label}</slot></h1>
@@ -80,25 +33,6 @@
 			</div>
 		</template>
 		<template id="template-node-file">
-			<style>
-				.node {
-					outline: var(--node-file-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
-					border-radius: 8px;
-					padding: 12px;
-				}
-
-				.node-file {
-					overflow-x: clip;
-					overflow-y: scroll;
-				}
-
-				.node-file-label {
-					font-size: 2em;
-					margin-block-start: .67em;
-					margin-block-end: .67em;
-				}
-			</style>
 			<article class="canvas-item node node-file">
 				<h1 class="node-file-label">
 					<slot name="node-file-label">{Node title}</slot>
@@ -107,70 +41,29 @@
 			</article>
 		</template>
 		<template id="template-node-text">
-			<style>
-				.node {
-					outline: var(--node-file-border-width) solid var(--color-node);
-					background-color: color-mix(in srgb, var(--color-node) 10%, var(--color-background));
-					border-radius: 8px;
-					padding: 12px;
-				}
-
-				.node-text {
-					overflow-x: clip;
-					overflow-y: scroll;
-				}
-			</style>
 			<article class="canvas-item node node-text">
 				<slot name="node-text-contents">{Node contents}</slot>
 			</article>
 		</template>
 		<template id="template-edge">
-			<style>
-				.edge {
-
-				}
-			</style>
 			<div class="canvas-item edge">
 				<slot name="edge-svg">{Edge SVG}</slot>
 			</div>
 		</template>
 		<template id="template-markdown">
-			<style>
-				.markdown {
-
-				}
-			</style>
 			<div class="markdown">
 				<slot name="markdown-document">{Markdown text}</slot>
 			</div>
 		</template>
 		<template id="template-frontmatter">
-			<style>
-				.frontmatter {
-					opacity: 50%;
-				}
-			</style>
 			<div class="frontmatter">
 				<slot name="frontmatter-contents">{Markdown text}</slot>
 			</div>
 		</template>
 		<template id="template-hashtag">
-			<style>
-				.hashtag {
-					background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
-					color: var(--color-accent);
-				}
-			</style>
 			<span class="hashtag"><slot name="hashtag-tag">{#Hashtag}</slot></span>
 		</template>
 		<template id="template-wikilink">
-			<style>
-				.wikilink {
-					color: var(--color-accent);
-					text-decoration: underline 1px solid currentColor;
-					cursor: pointer;
-				}
-			</style>
 			<a class="wikilink"></a>
 		</template>
 	</head>

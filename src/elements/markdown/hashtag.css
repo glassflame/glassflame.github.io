@@ -1,0 +1,4 @@
+.hashtag {
+    background-color: color-mix(in srgb, var(--color-accent) 20%, transparent);
+    color: var(--color-accent);
+}

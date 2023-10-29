@@ -9,6 +9,10 @@ export class HashtagElement extends CustomElement {
         return document.getElementById("template-hashtag")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * The name of the hashtag, with no leading hash, obtained from the `tag` attribute.
      * @returns {string}

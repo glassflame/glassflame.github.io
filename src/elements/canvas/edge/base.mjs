@@ -11,6 +11,10 @@ export class EdgeElement extends CanvasItemElement {
         return document.getElementById("template-edge")
     }
 
+    static createStyleSheets() {
+        return [...super.createStyleSheets(), this.makeModuleLikeStyleSheet(import.meta.url)]
+    }
+
     /**
      * The canvas this element is contained in.
      * Can be recalculated with {@link recalculateCanvas}.

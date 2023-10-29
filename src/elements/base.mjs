@@ -23,6 +23,27 @@ export class CustomElement extends HTMLElement {
     }
 
     /**
+     * Create a stylesheet which imports the stylesheet located at this module's path with `.mjs` replaced by `.css`.
+     * @param importMetaURL The value of `import.meta.url` for the calling module.
+     * @returns {CSSStyleSheet} The created stylesheet.
+     */
+    static makeModuleLikeStyleSheet(importMetaURL) {
+        const importURL = importMetaURL.replace(/[.]mjs$/, ".css")
+        const stylesheet = new CSSStyleSheet()
+        stylesheet.replaceSync(`@import "${importURL}";`)
+        return stylesheet
+    }
+
+    /**
+     * A way to use inheritance with custom stylesheets.
+     * @abstract Implementors should add their own stylesheets via this function.
+     * @returns {CSSStyleSheet[]} An array of stylesheets that should be added to the {@link shadowRoot}.
+     */
+    static createStyleSheets() {
+        return []
+    }
+
+    /**
      * The local cloned instance of the template node.
      * @type {Node}
      */
@@ -41,8 +62,10 @@ export class CustomElement extends HTMLElement {
      * Callback automatically called when this element is added to the DOM.
      */
     connectedCallback() {
-        // The shadow root, the inner contents of the element..
+        // The shadow root, the inner contents of the element.
         const shadow = this.attachShadow({ mode: "open" })
+        // Attach stylesheets to the shadow root.
+        shadow.adoptedStyleSheets.push(...this.constructor.createStyleSheets())
         // The element contained inside the shadow root..
         this.#instance = this.constructor.template.content.cloneNode(true)
         // Call the custom callback.

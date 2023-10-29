@@ -1,0 +1,11 @@
+.canvas {
+    position: relative;
+
+    display: flex;
+
+    width: max-content;
+    height: max-content;
+
+    margin-top: 64px;
+    margin-bottom: 64px;
+}
