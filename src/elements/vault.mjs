@@ -119,7 +119,6 @@ export class VaultElement extends CustomElement {
         this.vaultElement = this.instance.querySelector(this.constructor.VAULT_SELECTOR)
     }
 
-
     /**
      * The accent color of this vault.
      * Can be set manually, or updated via {@link refetchAppearance}.
@@ -145,12 +144,30 @@ export class VaultElement extends CustomElement {
         }
     }
 
-    onConnect() {
+    /**
+     * Index containing information about the files available in the Vault.
+     * Used to resolve Wikilinks.
+     * @type {{basenames: {[basename: string]: string}, paths: []} | null}
+     */
+    fileIndex
+
+    /**
+     * Update {@link fileIndex} by fetching the `steffo-file-index.json` file located at the root of the Vault.
+     * @returns {Promise<void>}
+     */
+    async refetchSteffoFileIndex() {
+        const response = await this.fetchCooldown("steffo-file-index.json")
+        if(response.status >= 400) {
+            this.fileIndex = null
+        }
+        this.fileIndex = await response.json()
+    }
+
+    async onConnect() {
         super.onConnect()
         this.recalculateVaultElement()
-        // noinspection JSIgnoredPromiseFromCall
-        this.#fetchQueueScheduler()
-        // noinspection JSIgnoredPromiseFromCall
-        this.refetchAppearance()
+        this.#fetchQueueScheduler().then()
+        await this.refetchAppearance()
+        await this.refetchSteffoFileIndex()
     }
 }

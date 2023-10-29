@@ -34,21 +34,6 @@ export class BrowseElement extends HTMLBodyElement {
         return url
     }
 
-    urlName(name) {
-        if(name.startsWith(".")) {
-            const path = filePath(name).join("/")
-            return this.urlFor({path})
-        }
-        else if(!name.includes("/")) {
-            const path = `${fileDetails(this.parameters.path).directory}/${name}.md`
-            return this.urlFor({path})
-        }
-        else {
-            const path = filePath(name).join("/")
-            return this.urlFor({path})
-        }
-    }
-
     // TODO: Add a landing page
 
     /**

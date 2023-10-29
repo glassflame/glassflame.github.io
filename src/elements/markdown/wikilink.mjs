@@ -1,6 +1,9 @@
 import { CustomElement } from "../base.mjs";
 import {findFirstAncestor} from "../../utils/trasversal.mjs";
 import {BrowseElement} from "../browse.mjs";
+import {VaultElement} from "../vault.mjs";
+import {filePath} from "../../utils/file.mjs";
+import {DisplayElement} from "../display.mjs";
 
 
 /**
@@ -12,17 +15,34 @@ export class WikilinkElement extends CustomElement {
     }
 
     /**
-     * Element handling the page navigation.
-     * @type {BrowseElement}
+     * Element displaying the this one.
+     * Can be recalculated with {@link recalculateAncestors}.
+     * @type {DisplayElement}
      */
-    browseElement
+    display
 
     /**
-     * Recalculate the value of {@link browseElement} using this element's current position in the DOM.
+     * Element representing the Obsidian Vault.
+     * Can be recalculated with {@link recalculateAncestors}.
+     * @type {VaultElement}
+     */
+    vault
+
+     /**
+     * Element handling the page navigation.
+     * Can be recalculated with {@link recalculateAncestors}.
+     * @type {BrowseElement}
+     */
+    browse
+
+    /**
+     * Recalculate the value of {@link browse} and {@link vault} using this element's current position in the DOM.
      * @returns {void}
      */
-    recalculateBrowseElement() {
-        this.browseElement = findFirstAncestor(this, BrowseElement)
+    recalculateAncestors() {
+        this.display = findFirstAncestor(this, DisplayElement)
+        this.vault = findFirstAncestor(this, VaultElement)
+        this.browse = findFirstAncestor(this, BrowseElement)
     }
 
     /**
@@ -69,13 +89,28 @@ export class WikilinkElement extends CustomElement {
     }
 
     resetAnchorElementProperties() {
-        this.anchorElement.href = this.browseElement.urlName(this.target)
+        let path = null
+        if(this.target.startsWith(".")) {
+            path = filePath(this.display.path + "/" + this.target).join("/")
+        }
+        else if(this.target.includes("/")) {
+            path = filePath(this.target).join("/")
+        }
+        else {
+            if(this.vault.fileIndex !== null) {
+                path = this.vault.fileIndex.basenames[this.target]
+            }
+        }
+
+        if(path !== null) {
+            this.anchorElement.href = this.browse.urlFor({path}).toString()
+        }
         this.anchorElement.innerText = this.text
     }
 
     onConnect() {
         super.onConnect()
-        this.recalculateBrowseElement()
+        this.recalculateAncestors()
         this.recalculateAnchorElement()
         this.resetAnchorElementProperties()
     }
