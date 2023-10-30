@@ -161,6 +161,24 @@ export class VaultElement extends CustomElement {
             this.fileIndex = null
         }
         this.fileIndex = await response.json()
+        this.#fileIndexQueue.forEach(resolve => resolve(undefined))
+    }
+
+    /**
+     * Array of resolve {@link Promise} objects of tasks awaiting {@link sleepUntilFileIndexIsAvailable}.
+     * @type {((v: undefined) => void)[]}
+     */
+    #fileIndexQueue = []
+
+    /**
+     * Await until {@link fileIndex} becomes available.
+     * @returns {Promise<void>}
+     */
+    async sleepUntilFileIndexIsAvailable() {
+        if(this.fileIndex) {
+            return
+        }
+        await new Promise(resolve => this.#fileIndexQueue.push(resolve))
     }
 
     async onConnect() {

@@ -88,7 +88,13 @@ export class WikilinkElement extends CustomElement {
         this.anchorElement = this.instance.querySelector(this.constructor.ANCHOR_SELECTOR)
     }
 
-    resetAnchorElementProperties() {
+    resetAnchorElementInnerText() {
+        this.anchorElement.innerText = this.text
+    }
+
+    async resetAnchorElementHref() {
+        await this.vault.sleepUntilFileIndexIsAvailable()
+
         let path = null
         if(this.target.startsWith(".")) {
             path = filePath(this.display.path + "/" + this.target).join("/")
@@ -102,16 +108,16 @@ export class WikilinkElement extends CustomElement {
             }
         }
 
-        if(path !== null) {
+        if(path !== undefined) {
             this.anchorElement.href = this.browse.urlFor({path}).toString()
         }
-        this.anchorElement.innerText = this.text
     }
 
     onConnect() {
         super.onConnect()
         this.recalculateAncestors()
         this.recalculateAnchorElement()
-        this.resetAnchorElementProperties()
+        this.resetAnchorElementInnerText()
+        this.resetAnchorElementHref().then()
     }
 }

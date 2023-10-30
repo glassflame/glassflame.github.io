@@ -166,8 +166,12 @@
 		<template id="template-wikilink">
 			<style>
 				.wikilink {
-					color: var(--color-accent);
+					color: color-mix(in srgb, var(--color-accent) 50%, transparent);
 					text-decoration: underline 1px solid currentColor;
+				}
+
+				.wikilink[href] {
+					color: var(--color-accent);
 					cursor: pointer;
 				}
 			</style>
