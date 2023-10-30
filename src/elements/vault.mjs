@@ -137,6 +137,9 @@ export class VaultElement extends CustomElement {
      */
     async refetchAppearance() {
         const response = await this.fetchCooldown(".obsidian/appearance.json")
+        if(response.status >= 400) {
+            return
+        }
         const appearance = await response.json()
         const accentColor = appearance.accentColor
         if(accentColor.match(/^#[0-9A-F]{3}$|^#[0-9A-F]{6}$/i)) {
@@ -159,6 +162,7 @@ export class VaultElement extends CustomElement {
         const response = await this.fetchCooldown("steffo-file-index.json")
         if(response.status >= 400) {
             this.fileIndex = null
+            return
         }
         this.fileIndex = await response.json()
         this.#fileIndexQueue.forEach(resolve => resolve(undefined))

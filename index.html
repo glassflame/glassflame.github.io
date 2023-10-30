@@ -13,6 +13,96 @@
 			@import "style/dark.css";
 		</style>
 		<!-- Templates -->
+		<template id="template-landing">
+			<style>
+				.landing {
+					margin-left: 64px;
+					margin-right: 64px;
+
+					max-width: calc(100vw - 128px);
+				}
+
+				.landing-form {
+					display: flex;
+					flex-direction: column;
+					gap: 8px;
+				}
+
+				.landing-form label {
+					display: flex;
+					flex-direction: row;
+				}
+
+				.landing-form label span {
+					min-width: 20%;
+				}
+
+				.landing-form input {
+					flex-grow: 1;
+				}
+
+				.landing-form input[type="submit"] {
+					flex-grow: 0;
+				}
+
+				a {
+					color: var(--color-accent);
+				}
+			</style>
+			<div class="landing">
+				<h2>
+					What is this?
+				</h2>
+				<p>
+					Obsiview is a web viewer for <a href="https://obsidian.md/">Obsidian</a> vaults!
+				</p>
+				<p>
+					It's currently in the Alpha development stage, so some features are still missing, but it's already functional!
+				</p>
+				<p>
+					Please report bugs, suggest features, and leave feedback at <a href="https://github.com/Steffo99/obsidian-file-index/issues">the project's issue tracker</a>!
+				</p>
+				<h2>
+					How do I browse a Vault?
+				</h2>
+				<p>
+					To browse a vault, enter its details here:
+				</p>
+				<form class="landing-form">
+					<label>
+						<span>Vault base URL</span>
+						<input type="url" name="vault" required placeholder="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/">
+					</label>
+					<label>
+						<span>Path of the initial file</span>
+						<input type="text" name="path" placeholder="8 - Crittografia applicata/2 - Comunicazione simmetrica/3 - Indistinguibilità/★ mappa concettuale.canvas">
+					</label>
+					<input type="submit" value="Open">
+				</form>
+				<p>
+					Alternatively, browse an example vault, such as:
+				</p>
+				<ul>
+					<li><a href="./?vault=https%3A%2F%2Fraw.githubusercontent.com%2FSteffo99%2Fappunti-magistrali%2Fmain%2F&path=9 - Algoritmi distribuiti/1 - Problemi/★ problemi.canvas">Steffo's University notes on Distributed Problems</a></li>
+					<li><a href="./?vault=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-help%2Fmaster%2Fen%2F&path=Home.md>">Obsidian's own documentation</a> (no wikilinks)</li>
+				</ul>
+				<h2>
+					Wikilinks are not working!
+				</h2>
+				<p>
+					To resolve Wikilinks, full knowledge of a Vault's contents is required.
+				</p>
+				<p>
+					Obsidian does not include a list of files in a Vault anywhere in it, because it operates under the assumption that this would be trivial to do via the file system.
+				</p>
+				<p>
+					Obsiview, running on the web, does not have this ability, and needs to somehow learn about it.
+				</p>
+				<p>
+					To solve this problem, the <a href="https://github.com/Steffo99/obsidian-file-index"><code>steffo-file-index</code></a> plugin was developed; once installed in a given Vault, and once the <code>steffo-file-index.json</code> file it generates is published, Obsiview will be able to resolve Wikilinks.
+				</p>
+			</div>
+		</template>
 		<template id="template-vault">
 			<style>
 				.vault {

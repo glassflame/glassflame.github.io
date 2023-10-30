@@ -9,9 +9,12 @@ import {
     NodeTextElement,
     FrontMatterElement,
     MarkdownElement,
-    VaultElement, BrowseElement
+    VaultElement,
+    BrowseElement,
+    LandingElement,
 } from "./elements/index.mjs";
 
+customElements.define("x-landing", LandingElement)
 customElements.define("x-vault", VaultElement)
 customElements.define("x-display", DisplayElement)
 customElements.define("x-canvas", CanvasElement)

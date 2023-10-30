@@ -3,3 +3,4 @@ export {MarkdownElement, HashtagElement, WikilinkElement, FrontMatterElement} fr
 export {DisplayElement} from "./display.mjs"
 export {VaultElement} from "./vault.mjs"
 export {BrowseElement} from "./browse.mjs"
+export {LandingElement} from "./landing.mjs"

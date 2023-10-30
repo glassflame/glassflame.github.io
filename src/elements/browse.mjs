@@ -5,84 +5,174 @@ import {fileDetails, filePath} from "../utils/file.mjs";
  */
 export class BrowseElement extends HTMLBodyElement {
     /**
-     * Parameters to be used to display *things*.
-     * @type {{vault: string, path: string, highlight: string}}
+     * @returns {string|null} The base URL of the current vault.
      */
-    parameters
-
-    /**
-     * Recalculate the value of {@link parameters} using the current {@link window.location}.
-     * @returns {void}
-     */
-    recalculateParameters() {
-        const location = window.location
-        const params = new URLSearchParams(location.search)
-        const vault = params.get("vault")
-        const path = params.get("path")
-        const highlight = location.hash.replace(/^#/, "")
-        this.parameters = {vault, path, highlight}
+    get vault() {
+        return new URLSearchParams(window.location.search).get("vault")
+    }
+    set vault(value) {
+        window.location.replace(this.urlFor({vault: value}))
     }
 
-    urlFor({vault = this.parameters.vault, path = this.parameters.path, highlight = this.parameters.highlight}) {
+    /**
+     * @returns {string} The path of the current displayed file.
+     */
+    get path() {
+        return new URLSearchParams(window.location.search).get("path") || "README.md"
+    }
+    set path(value) {
+        window.location.replace(this.urlFor({path: value}))
+    }
+
+    /**
+     * Determine the URL to reach a certain page, using the current {@link vault} and {@link path} as default, and overwriting them with the function's arguments.
+     * @param vault The base URL of the vault to use.
+     * @param path The file path of the file to display.
+     * @returns {URL} The resulting URL.
+     */
+    urlFor({vault = this.vault, path = this.path}) {
         const location = window.location
         const params = new URLSearchParams(location.search)
         params.set("vault", vault)
         params.set("path", path)
         const url = new URL(location)
         url.search = params.toString()
-        url.hash = highlight
         return url
     }
 
-    // TODO: Add a landing page
+    /**
+     * The landing page element, telling the user how to view a vault.
+     * Can be recreated by {@link recreateLandingElement}.
+     * Mutually exclusive with {@link vaultElement}.
+     * @type {LandingElement|null}
+     */
+    landingElement
+
+    recreateLandingElement() {
+        if(this.landingElement) {
+            this.landingElement.remove()
+            this.landingElement = null
+        }
+        if(this.vaultElement) {
+            this.vaultElement.remove()
+            this.vaultElement = null
+        }
+        if(this.rootDisplayElement) {
+            this.rootDisplayElement.remove()
+            this.rootDisplayElement = null
+        }
+
+        this.vaultElement = document.createElement("x-landing")
+
+        this.appendChild(this.vaultElement)
+    }
 
     /**
      * The vault element, describing to its descendants how to handle various situations.
-     * @type {VaultElement}
+     * Can be recreated by {@link recreateVaultElement}.
+     * Mutually exclusive with {@link landingElement}.
+     * @type {VaultElement|null}
      */
     vaultElement
 
     /**
+     * Recreate {@link vaultElement} with the current value of {@link vault}.
+     * @returns {void}
+     */
+    recreateVaultElement() {
+        if(this.landingElement) {
+            this.landingElement.remove()
+            this.landingElement = null
+        }
+        if(this.vaultElement) {
+            this.vaultElement.remove()
+            this.vaultElement = null
+        }
+        if(this.rootDisplayElement) {
+            this.rootDisplayElement.remove()
+            this.rootDisplayElement = null
+        }
+
+        this.vaultElement = document.createElement("x-vault")
+        this.vaultElement.base = this.vault
+        this.vaultElement.cooldownMs = 0
+
+        this.appendChild(this.vaultElement)
+    }
+
+    /**
      * The title of the page.
+     * Can be recreated by {@link recreateTitleElement}.
      * @type {HTMLHeadingElement}
      */
     titleElement
 
     /**
+     * The name of this application, displayed if no page is being shown.
+     * @type {string}
+     */
+    static APP_NAME = "Obsiview"
+
+    /**
+     * Recreate {@link titleElement} with the current value of {@link path}.
+     * @returns {void}
+     */
+    recreateTitleElement() {
+        if(this.titleElement) {
+            this.titleElement.remove()
+            this.titleElement = null
+        }
+
+        const vault = this.vault
+
+        let name
+        if(vault === null) {
+            name = this.constructor.APP_NAME
+        }
+        else {
+            name = fileDetails(this.path).name
+        }
+
+        this.titleElement = document.createElement("h1")
+        this.titleElement.innerText = name
+
+        this.appendChild(this.titleElement)
+    }
+
+    /**
      * The display element showing the contents of the specified file.
-     * @type {DisplayElement}
+     * Can be recreated by {@link recreateRootDisplayElement}.
+     * Mutually exclusive with {@link landingElement}.
+     * @type {DisplayElement|null}
      */
     rootDisplayElement
 
     /**
-     * Recreate all contents of this element to match the current value of {@link parameters}.
+     * Recreate {@link rootDisplayElement} with the current value of {@link path}.
+     * @returns {void}
      */
-    recreateContents() {
-        if(this.vaultElement) {
-            this.vaultElement.remove()
-            this.vaultElement = null
+    recreateRootDisplayElement() {
+        if(this.rootDisplayElement) {
+            this.rootDisplayElement.remove()
             this.rootDisplayElement = null
         }
 
-        const {name} = fileDetails(this.parameters.path)
-        this.titleElement = document.createElement("h1")
-        this.titleElement.innerText = name
-        this.appendChild(this.titleElement)
-
-        this.vaultElement = document.createElement("x-vault")
-        this.vaultElement.base = this.parameters.vault
-        this.vaultElement.cooldownMs = 0
-
         this.rootDisplayElement = document.createElement("x-display")
-        this.rootDisplayElement.path = this.parameters.path
+        this.rootDisplayElement.path = this.path
         this.rootDisplayElement.slot = "vault-child"
 
         this.vaultElement.appendChild(this.rootDisplayElement)
-        this.appendChild(this.vaultElement)
     }
 
+    // noinspection JSUnusedGlobalSymbols
     connectedCallback() {
-        this.recalculateParameters()
-        this.recreateContents()
+        this.recreateTitleElement()
+        if(this.vault === null) {
+            this.recreateLandingElement()
+        }
+        else {
+            this.recreateVaultElement()
+            this.recreateRootDisplayElement()
+        }
     }
 }
