@@ -16,10 +16,10 @@
 		<template id="template-landing">
 			<style>
 				.landing {
-					margin-left: 64px;
-					margin-right: 64px;
+					margin-left: var(--margins);
+					margin-right: var(--margins);
 
-					max-width: calc(100vw - 128px);
+					max-width: calc(100vw - var(--margins) * 2);
 				}
 
 				.landing-form {
@@ -34,7 +34,7 @@
 				}
 
 				.landing-form label span {
-					min-width: 20%;
+					width: calc(var(--margins) * 4);
 				}
 
 				.landing-form input {
@@ -74,7 +74,7 @@
 						<input type="url" name="vault" required placeholder="https://raw.githubusercontent.com/Steffo99/appunti-magistrali/main/">
 					</label>
 					<label>
-						<span>Path of the initial file</span>
+						<span>File path</span>
 						<input type="text" name="path" placeholder="8 - Crittografia applicata/2 - Comunicazione simmetrica/3 - Indistinguibilità/★ mappa concettuale.canvas">
 					</label>
 					<input type="submit" value="Open">
@@ -106,8 +106,8 @@
 		<template id="template-vault">
 			<style>
 				.vault {
-					margin-left: 64px;
-					margin-right: 64px;
+					margin-left: var(--margins);
+					margin-right: var(--margins);
 				}
 			</style>
 			<div class="vault">

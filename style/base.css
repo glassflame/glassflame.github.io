@@ -11,12 +11,26 @@
     --color-blue: #53DFDD;
     --color-purple: #A882FF;
 
+    --margins: 0;
+
     --color-node: var(--color-gray);
     --node-group-border-width: 2px;
     --node-file-border-width: 2px;
     --edge-width: 2px;
     --font-text: sans-serif;
     --font-mono: monospace;
+}
+
+@media screen {
+    :root {
+        --margins: 32px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    :root {
+        --margins: 64px;
+    }
 }
 
 body {
