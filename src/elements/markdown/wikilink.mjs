@@ -129,7 +129,7 @@ export class WikilinkElement extends CustomElement {
             }
         }
 
-        if(path !== undefined) {
+        if(path !== undefined && this.vault.fileIndex.paths?.includes(path)) {
             this.anchorElement.href = this.browse.urlFor({path}).toString()
         }
     }
