@@ -29,7 +29,7 @@ export class MarkdownElement extends CustomElement {
                         tokens: this.lexer.inline(cap[1])
                     };
                 }
-            }
+            },
         },
         extensions: [
             {
@@ -58,8 +58,7 @@ export class MarkdownElement extends CustomElement {
                 name: "mathBlock",
                 level: "block",
                 start(src) {
-                    const match = src.match(/[$][$]/)
-                    return match?.index
+                    return src.match(/[$][$]/)?.index
                 },
                 tokenizer(src, _) {
                     const match = src.match(/^[$][$](.*?)[$][$]/s)
@@ -73,6 +72,30 @@ export class MarkdownElement extends CustomElement {
                 },
                 renderer(token) {
                     return `<x-math document="${token.document}" block></x-math>`
+                }
+            },
+            {
+                name: "callout",
+                level: "block",
+                start(src) {
+                    return src.match(/[$][$]/)?.index
+                },
+                tokenizer(src, _) {
+                    const match = src.match(/^ {0,3}> ?\[!(.+)]([-+])? ?(.+)?\n+( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/)
+                    if(match) {
+                        return {
+                            type: "callout",
+                            raw: match[0],
+                            kind: match[1],
+                            collapse: match[2],
+                            admonition: match[3],
+                            contents: match[4],
+                        }
+                    }
+                },
+                renderer(token) {
+                    console.log(token)
+                    return `<x-callout kind="${token.kind}" collapse="${token.collapse}" admonition="${token.admonition}" contents="${token.contents}"></x-callout>`
                 }
             },
             {
