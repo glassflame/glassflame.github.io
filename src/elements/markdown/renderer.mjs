@@ -10,11 +10,27 @@ export class MarkdownElement extends CustomElement {
         return document.getElementById("template-markdown")
     }
 
+    // noinspection JSUnusedGlobalSymbols
     /**
      * {@link Marked} Markdown renderer.
      * @type {Marked}
      */
     static MARKED = new Marked({
+        tokenizer: {
+            // Fix single, double, and triple equals on a single line being interpreted as headings
+            lheading(src) {
+                const cap = /^(?!bull )((?:.|\n(?!\s*?\n|bull ))+?)\n {0,3}(={4,}|-{4,}) *(?:\n+|$)/.exec(src);
+                if (cap) {
+                    return {
+                        type: 'heading',
+                        raw: cap[0],
+                        depth: cap[2].charAt(0) === '=' ? 1 : 2,
+                        text: cap[1],
+                        tokens: this.lexer.inline(cap[1])
+                    };
+                }
+            }
+        },
         extensions: [
             {
                 name: "frontmatter",
@@ -39,13 +55,34 @@ export class MarkdownElement extends CustomElement {
                 }
             },
             {
+                name: "mathBlock",
+                level: "block",
+                start(src) {
+                    const match = src.match(/[$][$]/)
+                    return match?.index
+                },
+                tokenizer(src, _) {
+                    const match = src.match(/^[$][$](.*?)[$][$]/s)
+                    if(match) {
+                        return {
+                            type: "mathBlock",
+                            raw: match[0],
+                            document: match[1],
+                        }
+                    }
+                },
+                renderer(token) {
+                    return `<x-math document="${token.document}" block></x-math>`
+                }
+            },
+            {
                 name: "wikilink",
                 level: "inline",
                 start(src) {
                     return src.match(/\[\[/)?.index
                 },
                 tokenizer(src, _) {
-                    const match = src.match(/^\[\[([^|\]]+)(?:\|([^\]]+))?]]/)
+                    const match = src.match(/^\[\[([^|\]]*)(?:\|([^\]]*))?]]/)
                     if(match) {
                         return {
                             type: "wikilink",
@@ -80,26 +117,6 @@ export class MarkdownElement extends CustomElement {
                 }
             },
             {
-                name: "mathBlock",
-                level: "block",
-                start(src) {
-                    return src.match(/[$][$]/)?.index
-                },
-                tokenizer(src, _) {
-                    const match = src.match(/^[$][$](.+?)[$][$]/s)
-                    if(match) {
-                        return {
-                            type: "mathBlock",
-                            raw: match[0],
-                            document: match[1],
-                        }
-                    }
-                },
-                renderer(token) {
-                    return `<x-math document="${token.document}" block></x-math>`
-                }
-            },
-            {
                 name: "mathInline",
                 level: "inline",
                 start(src) {
@@ -126,7 +143,7 @@ export class MarkdownElement extends CustomElement {
                     return src.match(/==/)?.index
                 },
                 tokenizer(src, _) {
-                    const match = src.match(/^==(.+?)==/)
+                    const match = src.match(/^==(.*?)==/)
                     if(match) {
                         return {
                             type: "highlight",
