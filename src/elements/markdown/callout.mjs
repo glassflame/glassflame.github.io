@@ -1,6 +1,6 @@
 import {CustomElement} from "../base.mjs";
 
-export class Callout extends CustomElement {
+export class CalloutElement extends CustomElement {
     static get template() {
         return document.getElementById("template-callout")
     }
