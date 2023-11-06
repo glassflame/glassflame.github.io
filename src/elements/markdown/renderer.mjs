@@ -119,6 +119,26 @@ export class MarkdownElement extends CustomElement {
                     return `<x-math document="${token.document}"></x-math>`
                 }
             },
+            {
+                name: "highlight",
+                level: "inline",
+                start(src) {
+                    return src.match(/==/)?.index
+                },
+                tokenizer(src, _) {
+                    const match = src.match(/^==(.+?)==/)
+                    if(match) {
+                        return {
+                            type: "highlight",
+                            raw: match[0],
+                            text: match[1],
+                        }
+                    }
+                },
+                renderer(token) {
+                    return `<mark>${token.text}</mark>`
+                },
+            },
         ]
     })
 
