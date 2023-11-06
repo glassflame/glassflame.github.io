@@ -92,17 +92,26 @@ blockquote {
     text-align: center;
 }
 
-.wikilink {
+a, .wikilink {
     color: color-mix(in srgb, var(--color-accent) 50%, transparent);
     text-decoration: underline 1px dashed color-mix(in srgb, var(--color-accent) 50%, transparent);
 }
 
-.wikilink[href] {
+a[href], .wikilink[href] {
     color: var(--color-accent);
     text-decoration: underline 1px solid var(--color-accent);
     cursor: pointer;
 }
 
-.wikilink.wikilink-heading {
+a[href]:hover, .wikilink[href]:hover {
+    color: color-mix(in srgb, var(--color-accent) 50%, var(--color-foreground));
+    text-decoration: underline 1px solid color-mix(in srgb, var(--color-accent) 50%, var(--color-foreground));
+}
+
+h1 a, .wikilink.wikilink-heading {
+    color: var(--color-foreground);
+}
+
+h1 a:hover, .wikilink.wikilink-heading:hover {
     color: var(--color-foreground);
 }
