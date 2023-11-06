@@ -104,7 +104,7 @@ export class WikilinkElement extends CustomElement {
         }
         else {
             if(this.vault.fileIndex !== null) {
-                path = this.vault.fileIndex.basenames[this.target]
+                path = this.vault.fileIndex.basenames[this.target.toLowerCase()]
             }
         }
 
