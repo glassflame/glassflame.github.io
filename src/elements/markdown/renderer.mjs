@@ -20,7 +20,7 @@ export class MarkdownElement extends CustomElement {
                 name: "frontmatter",
                 level: "block",
                 start(src) {
-                    return src.match(/^(-{3,})/)?.index
+                    return src.match(/(-{3,})/)?.index
                 },
                 tokenizer(src, _) {
                     const match = src.match(/^(-{3,})(.+)?\n((?:.+\n)*)\1\n/)
@@ -42,7 +42,7 @@ export class MarkdownElement extends CustomElement {
                 name: "wikilink",
                 level: "inline",
                 start(src) {
-                    return src.match(/^\[\[/)?.index
+                    return src.match(/\[\[/)?.index
                 },
                 tokenizer(src, _) {
                     const match = src.match(/^\[\[([^|\]]+)(?:\|([^\]]+))?]]/)
@@ -63,7 +63,7 @@ export class MarkdownElement extends CustomElement {
                 name: "hashtag",
                 level: "inline",
                 start(src) {
-                    return src.match(/^#/)?.index
+                    return src.match(/#/)?.index
                 },
                 tokenizer(src, _) {
                     const match = src.match(/^#([A-Za-z0-9]+)/)
@@ -78,7 +78,48 @@ export class MarkdownElement extends CustomElement {
                 renderer(token) {
                     return `<x-hashtag tag="${token.tag}"></x-hashtag>`
                 }
-            }
+            },
+            {
+                name: "mathBlock",
+                level: "block",
+                start(src) {
+                    return src.match(/[$][$]/)?.index
+                },
+                tokenizer(src, _) {
+                    const match = src.match(/^[$][$](.+?)[$][$]/s)
+                    if(match) {
+                        return {
+                            type: "mathBlock",
+                            raw: match[0],
+                            document: match[1],
+                        }
+                    }
+                },
+                renderer(token) {
+                    return `<x-math document="${token.document}" block></x-math>`
+                }
+            },
+            {
+                name: "mathInline",
+                level: "inline",
+                start(src) {
+                    return src.match(/[$]/)?.index
+                },
+                tokenizer(src, _) {
+                    const match = src.match(/^[$](.+?)[$]/)
+                    if(match) {
+                        console.log(match)
+                        return {
+                            type: "mathInline",
+                            raw: match[0],
+                            document: match[1],
+                        }
+                    }
+                },
+                renderer(token) {
+                    return `<x-math document="${token.document}"></x-math>`
+                }
+            },
         ]
     })
 

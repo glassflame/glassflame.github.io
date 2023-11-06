@@ -12,6 +12,7 @@
 			@import "style/light.css";
 			@import "style/dark.css";
 		</style>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
 		<!-- Templates -->
 		<template id="template-landing">
 			<style>
@@ -268,6 +269,9 @@
 				}
 			</style>
 			<a class="wikilink"></a>
+		</template>
+		<template id="template-math">
+			<slot name="math-katex">{Math}</slot>
 		</template>
 	</head>
 	<body is="x-browse"></body>

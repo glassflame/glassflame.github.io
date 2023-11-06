@@ -19,6 +19,7 @@
     --edge-width: 2px;
     --font-text: sans-serif;
     --font-mono: monospace;
+    --math-border-width: 1px;
 }
 
 @media screen {
@@ -64,4 +65,18 @@ a {
 svg line {
     stroke: var(--color-node);
     stroke-width: var(--edge-width);
+}
+
+.math {
+    overflow-x: auto;
+}
+
+.math-inline {
+
+}
+
+.math-block {
+    margin: 1em 0;
+
+    text-align: center;
 }
