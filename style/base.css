@@ -20,6 +20,7 @@
     --font-text: sans-serif;
     --font-mono: monospace;
     --math-border-width: 1px;
+    --blockquote-border-width: 2px;
 }
 
 @media screen {
@@ -65,6 +66,15 @@ a {
 svg line {
     stroke: var(--color-node);
     stroke-width: var(--edge-width);
+}
+
+blockquote {
+    border-left: var(--blockquote-border-width) solid var(--color-accent);
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-left: 1.5ex;
 }
 
 .math {
