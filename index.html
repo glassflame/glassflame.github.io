@@ -102,8 +102,7 @@
 				<p>
 					To solve this problem, the <a href="https://github.com/Steffo99/obsidian-file-index"><code>steffo-file-index</code></a> plugin was developed; once installed in a given Vault, and once the <code>steffo-file-index.json</code> file it generates is published, Obsiview will be able to resolve Wikilinks.
 				</p>
-			</div>
-		</template>
+			</div></template>
 		<template id="template-vault">
 			<style>
 				.vault {
@@ -113,8 +112,7 @@
 			</style>
 			<div class="vault">
 				<slot name="vault-child"></slot>
-			</div>
-		</template>
+			</div></template>
 		<template id="template-canvas">
 			<style>
 				.canvas {
@@ -134,11 +132,9 @@
 			<div class="canvas">
 				<slot name="canvas-nodes">{Canvas nodes}</slot>
 				<slot name="canvas-edges">{Canvas edges}</slot>
-			</div>
-		</template>
+			</div></template>
 		<template id="template-display">
-			<slot name="display-container">{Displayed content}</slot>
-		</template>
+			<slot name="display-container">{Displayed content}</slot></template>
 		<template id="template-node-group">
 			<style>
 				.node {
@@ -170,8 +166,7 @@
 				<aside class="node-group-label">
 					<h1 class="node-group-label-title"><slot name="node-group-label">{Group label}</slot></h1>
 				</aside>
-			</div>
-		</template>
+			</div></template>
 		<template id="template-node-file">
 			<style>
 				.node {
@@ -197,8 +192,7 @@
 					<slot name="node-file-label">{Node title}</slot>
 				</h1>
 				<slot name="node-file-contents">{Node contents}</slot>
-			</article>
-		</template>
+			</article></template>
 		<template id="template-node-text">
 			<style>
 				.node {
@@ -215,8 +209,7 @@
 			</style>
 			<article class="canvas-item node node-text">
 				<slot name="node-text-contents">{Node contents}</slot>
-			</article>
-		</template>
+			</article></template>
 		<template id="template-edge">
 			<style>
 				.edge {
@@ -225,8 +218,7 @@
 			</style>
 			<div class="canvas-item edge">
 				<slot name="edge-svg">{Edge SVG}</slot>
-			</div>
-		</template>
+			</div></template>
 		<template id="template-markdown">
 			<style>
 				.markdown {
@@ -235,8 +227,7 @@
 			</style>
 			<div class="markdown">
 				<slot name="markdown-document">{Markdown text}</slot>
-			</div>
-		</template>
+			</div></template>
 		<template id="template-frontmatter">
 			<style>
 				.frontmatter {
@@ -245,8 +236,7 @@
 			</style>
 			<div class="frontmatter">
 				<slot name="frontmatter-contents">{Markdown text}</slot>
-			</div>
-		</template>
+			</div></template>
 		<template id="template-hashtag">
 			<style>
 				.hashtag {
@@ -254,8 +244,7 @@
 					color: var(--color-accent);
 				}
 			</style>
-			<span class="hashtag"><slot name="hashtag-tag">{#Hashtag}</slot></span>
-		</template>
+			<span class="hashtag"><slot name="hashtag-tag">{#Hashtag}</slot></span></template>
 		<template id="template-wikilink">
 			<style>
 				.wikilink {
@@ -268,11 +257,9 @@
 					cursor: pointer;
 				}
 			</style>
-			<a class="wikilink"></a>
-		</template>
+			<a class="wikilink"></a></template>
 		<template id="template-math">
-			<slot name="math-katex">{Math}</slot>
-		</template>
+			<slot name="math-katex">{Math}</slot></template>
 	</head>
 	<body is="x-browse"></body>
 </html>

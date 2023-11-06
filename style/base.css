@@ -69,6 +69,7 @@ svg line {
 
 .math {
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .math-inline {
