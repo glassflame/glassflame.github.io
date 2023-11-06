@@ -1,6 +1,9 @@
 import { NodeElement } from "./base.mjs";
 import { DisplayElement } from "../../display.mjs";
 import { fileDetails } from "../../../utils/file.mjs";
+import {findFirstAncestor} from "../../../utils/trasversal.mjs";
+import {VaultElement} from "../../vault.mjs";
+import {BrowseElement} from "../../browse.mjs";
 
 
 export class NodeFileElement extends NodeElement {
@@ -14,6 +17,9 @@ export class NodeFileElement extends NodeElement {
      */
     get pathRelativeToVault() {
         return this.getAttribute("path")
+    }
+    set pathRelativeToVault(value) {
+        return this.setAttribute("path", value)
     }
 
     /**
@@ -38,7 +44,7 @@ export class NodeFileElement extends NodeElement {
     static LABEL_ELEMENT_SLOT = "node-file-label"
 
     /**
-     * Recreate {@link labelElement} with the current value of {@link fileName}.
+     * Recreate {@link labelElement} with the current value of {@link fileName} and {@link vault}.
      */
     recreateLabelElement() {
         if(this.labelElement) {
@@ -46,9 +52,11 @@ export class NodeFileElement extends NodeElement {
             this.labelElement = null
         }
 
-        this.labelSlotted = document.createElement("span")
+        this.labelSlotted = document.createElement("x-wikilink")
         this.labelSlotted.slot = this.constructor.LABEL_ELEMENT_SLOT
-        this.labelSlotted.innerText = this.fileName
+        this.labelSlotted.target = this.pathRelativeToVault
+        this.labelSlotted.text = this.fileName
+        this.labelSlotted.heading = true
         this.appendChild(this.labelSlotted)
     }
 

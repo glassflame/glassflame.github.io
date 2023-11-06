@@ -246,18 +246,7 @@
 			</style>
 			<span class="hashtag"><slot name="hashtag-tag">{#Hashtag}</slot></span></template>
 		<template id="template-wikilink">
-			<style>
-				.wikilink {
-					color: color-mix(in srgb, var(--color-accent) 50%, transparent);
-					text-decoration: underline 1px solid currentColor;
-				}
-
-				.wikilink[href] {
-					color: var(--color-accent);
-					cursor: pointer;
-				}
-			</style>
-			<a class="wikilink"></a></template>
+			<slot name="wikilink-anchor">{Wikilink}</slot></template>
 		<template id="template-math">
 			<slot name="math-katex">{Math}</slot></template>
 	</head>

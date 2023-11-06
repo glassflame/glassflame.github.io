@@ -81,3 +81,18 @@ svg line {
 
     text-align: center;
 }
+
+.wikilink {
+    color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    text-decoration: underline 1px dashed color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+.wikilink[href] {
+    color: var(--color-accent);
+    text-decoration: underline 1px solid var(--color-accent);
+    cursor: pointer;
+}
+
+.wikilink.wikilink-heading {
+    color: var(--color-foreground);
+}

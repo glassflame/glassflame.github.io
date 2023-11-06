@@ -52,6 +52,9 @@ export class WikilinkElement extends CustomElement {
     get target() {
         return this.getAttribute("target")
     }
+    set target(value) {
+        this.setAttribute("target", value)
+    }
 
     /**
      * Get the text that should be displayed in this wikilink.
@@ -66,32 +69,50 @@ export class WikilinkElement extends CustomElement {
         }
         return text
     }
+    set text(value) {
+        // TODO: Dirty hack to hide "undefined"
+        // noinspection EqualityComparisonWithCoercionJS
+        if(value == "undefined") {
+            this.removeAttribute("text")
+        }
+        else {
+            this.setAttribute("text", value)
+        }
+    }
 
     /**
-     * The CSS selector of the anchor element.
-     * @type {string}
+     * Set the `heading` property of the wikilink, changing its style.
+     * @returns {boolean} Whether the element is a heading or not.
      */
-    static ANCHOR_SELECTOR = "a.wikilink"
+    get heading() {
+        return this.hasAttribute("heading")
+    }
+    set heading(value) {
+        if(value) {
+            this.setAttribute("heading", "")
+        }
+        else {
+            this.removeAttribute("heading")
+        }
+    }
 
     /**
      * The element displaying the wikilink.
-     * Can be recreated with {@link recreateTagElement}.
+     * Can be recreated with {@link recreateAnchorElement}.
      * @type {HTMLAnchorElement}
      */
     anchorElement
 
     /**
-     Update the value of the {@link canvasItemElement} by querying the current {@link instance} with {@link ANCHOR_SELECTOR}.
-     * @returns {void}
+     * The name of the slot where {@link anchorElement} should be placed in.
+     * @type {string}
      */
-    recalculateAnchorElement() {
-        this.anchorElement = this.instance.querySelector(this.constructor.ANCHOR_SELECTOR)
-    }
+    static ANCHOR_ELEMENT_SLOT = "wikilink-anchor"
 
-    resetAnchorElementInnerText() {
-        this.anchorElement.innerText = this.text
-    }
-
+    /**
+     * Reset the `href` property of an existing {@link anchorElement}.
+     * @returns {Promise<void>}
+     */
     async resetAnchorElementHref() {
         await this.vault.sleepUntilFileIndexIsAvailable()
 
@@ -113,11 +134,25 @@ export class WikilinkElement extends CustomElement {
         }
     }
 
+    /**
+     * Recreate {@link anchorElement} with the current {@link target}, {@link text} and {@link heading}.
+     * @returns {void}
+     */
+    recreateAnchorElement() {
+        this.anchorElement = document.createElement("a")
+        this.anchorElement.slot = this.constructor.ANCHOR_ELEMENT_SLOT
+        this.anchorElement.innerText = this.text
+        this.anchorElement.classList.add("wikilink")
+        if(this.heading) {
+            this.anchorElement.classList.add("wikilink-heading")
+        }
+        this.appendChild(this.anchorElement)
+        this.resetAnchorElementHref().then()
+    }
+
     onConnect() {
         super.onConnect()
         this.recalculateAncestors()
-        this.recalculateAnchorElement()
-        this.resetAnchorElementInnerText()
-        this.resetAnchorElementHref().then()
+        this.recreateAnchorElement()
     }
 }
