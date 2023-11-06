@@ -108,7 +108,6 @@ export class MarkdownElement extends CustomElement {
                 tokenizer(src, _) {
                     const match = src.match(/^[$](.+?)[$]/)
                     if(match) {
-                        console.log(match)
                         return {
                             type: "mathInline",
                             raw: match[0],
