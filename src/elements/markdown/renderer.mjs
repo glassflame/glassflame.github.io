@@ -19,7 +19,7 @@ export class MarkdownElement extends CustomElement {
         tokenizer: {
             // Fix single, double, and triple equals on a single line being interpreted as headings
             lheading(src) {
-                const cap = /^(?!bull )((?:.|\n(?!\s*?\n|bull ))+?)\n {0,3}(={4,}|-{4,}) *(?:\n+|$)/.exec(src);
+                const cap = /^(?![.+*] )((?:.|\n(?!\s*?\n|[.+*] ))+?)\n {0,3}(={4,}|-{4,}) *(?:\n+|$)/.exec(src);
                 if (cap) {
                     return {
                         type: 'heading',
