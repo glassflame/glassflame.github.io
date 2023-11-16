@@ -18,8 +18,8 @@ export class MarkdownElement extends CustomElement {
     static MARKED = new Marked({
         tokenizer: {
             // Fix single, double, and triple equals on a single line being interpreted as headings
-            lheading(src) {
-                const cap = /^(?![.+*] )((?:.|\n(?!\s*?\n|[.+*] ))+?)\n {0,3}(={4,}|-{4,}) *(?:\n+|$)/.exec(src);
+            lheading(raw) {
+                const cap = /^(?![.+*] )((?:.|\n(?!\s*?\n|[.+*] ))+?)\n {0,3}(={4,}|-{4,}) *(?:\n+|$)/.exec(raw);
                 if (cap) {
                     return {
                         type: 'heading',
@@ -30,6 +30,23 @@ export class MarkdownElement extends CustomElement {
                     };
                 }
             },
+            blockquote(raw) {
+                console.log(raw)
+                const calloutMatch = raw.match(/^\[!(.+)]([-+])? ?([^\n]+)?(?:\n+(.*))?/)
+                if(calloutMatch) {
+                    const [, kind, collapse, admonition, contents] = calloutMatch
+                    const result = {
+                        type: "callout",
+                        raw,
+                        kind,
+                        collapse,
+                        admonition,
+                        contents,
+                    }
+                    return result
+                }
+                return false
+            }
         },
         extensions: [
             {
@@ -72,30 +89,6 @@ export class MarkdownElement extends CustomElement {
                 },
                 renderer(token) {
                     return `<x-math document="${token.document}" block></x-math>`
-                }
-            },
-            {
-                name: "callout",
-                level: "block",
-                start(src) {
-                    return src.match(/[$][$]/)?.index
-                },
-                tokenizer(src, _) {
-                    const match = src.match(/^ {0,3}> ?\[!(.+)]([-+])? ?(.+)?\n+( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/)
-                    if(match) {
-                        return {
-                            type: "callout",
-                            raw: match[0],
-                            kind: match[1],
-                            collapse: match[2],
-                            admonition: match[3],
-                            contents: match[4],
-                        }
-                    }
-                },
-                renderer(token) {
-                    console.log(token)
-                    return `<x-callout kind="${token.kind}" collapse="${token.collapse}" admonition="${token.admonition}" contents="${token.contents}"></x-callout>`
                 }
             },
             {
@@ -179,7 +172,15 @@ export class MarkdownElement extends CustomElement {
                     return `<mark>${token.text}</mark>`
                 },
             },
-        ]
+            {
+                name: "callout",
+                level: "block",
+                renderer(token) {
+                    console.log(token)
+                    return `<x-callout kind="${token.kind}" collapse="${token.collapse}" admonition="${token.admonition}" contents="${token.contents}" cronus></x-callout>`
+                }
+            }
+        ],
     })
 
     /**

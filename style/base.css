@@ -3,17 +3,28 @@
     --color-foreground: #000000;
     --color-accent: initial;
 
-    --color-gray: #7E7E7E;
-    --color-red: #FB464C;
-    --color-orange: #E9973F;
-    --color-yellow: #E0DE71;
-    --color-green: #44CF6E;
-    --color-blue: #53DFDD;
-    --color-purple: #A882FF;
+    --color-canvas-gray: #7E7E7E;
+    --color-canvas-red: #FB464C;
+    --color-canvas-orange: #E9973F;
+    --color-canvas-yellow: #E0DE71;
+    --color-canvas-green: #44CF6E;
+    --color-canvas-blue: #53DFDD;
+    --color-canvas-purple: #A882FF;
+    --color-canvas: var(--color-canvas-gray);
+
+    --color-callout-gray: #9e9e9e;
+    --color-callout-red: #e93147;
+    --color-callout-orange: #ec7500;
+    --color-callout-yellow: #e0ac00;
+    --color-callout-green: #08b94e;
+    --color-callout-cyan: #00bfbc;
+    --color-callout-blue: #086ddd;
+    --color-callout-purple: #7852ee;
+    --color-callout-pink: #d53984;
+    --color-callout: var(--color-callout-gray);
 
     --margins: 0;
 
-    --color-node: var(--color-gray);
     --node-group-border-width: 2px;
     --node-file-border-width: 2px;
     --edge-width: 2px;
@@ -64,7 +75,7 @@ a {
 }
 
 svg line {
-    stroke: var(--color-node);
+    stroke: var(--color-canvas);
     stroke-width: var(--edge-width);
 }
 
@@ -114,4 +125,56 @@ h1 a, .wikilink.wikilink-heading {
 
 h1 a:hover, .wikilink.wikilink-heading:hover {
     color: var(--color-foreground);
+}
+
+.callout {
+
+}
+
+.callout-abstract, .callout-summary, .callout-tldr {
+    --color-callout: var(--color-callout-cyan);
+}
+
+.callout-info {
+    --color-callout: var(--color-callout-blue);
+}
+
+.callout-todo {
+    --color-callout: var(--color-callout-blue)
+}
+
+.callout-tip, .callout-hint, .callout-important {
+    --color-callout: var(--color-callout-cyan);
+}
+
+.callout-success, .callout-check, .callout-done {
+    --color-callout: var(--color-callout-green);
+}
+
+.callout-question, .callout-help, .callout-faq {
+    --color-callout: var(--color-callout-orange);
+}
+
+.callout-warning, .callout-caution, .callout-attention {
+    --color-callout: var(--color-callout-orange);
+}
+
+.callout-failure, .callout-fail, .callout-mission {
+    --color-callout: var(--color-callout-red);
+}
+
+.callout-danger, .callout-error {
+    --color-callout: var(--color-callout-red);
+}
+
+.callout-bug {
+    --color-callout: var(--color-callout-red);
+}
+
+.callout-example {
+    --color-callout: var(--color-callout-purple);
+}
+
+.callout-quote, .callout-cite {
+    --color-callout: var(--color-callout-gray);
 }

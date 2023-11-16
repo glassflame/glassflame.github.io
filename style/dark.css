@@ -4,12 +4,12 @@
         --color-foreground: #ffffff;
         --color-accent: #218cff;
 
-        --color-gray: #7E7E7E;
-        --color-red: #FB464C;
-        --color-orange: #E9973F;
-        --color-yellow: #E0DE71;
-        --color-green: #44CF6E;
-        --color-blue: #53DFDD;
-        --color-purple: #A882FF;
+        --color-canvas-gray: #7E7E7E;
+        --color-canvas-red: #FB464C;
+        --color-canvas-orange: #E9973F;
+        --color-canvas-yellow: #E0DE71;
+        --color-canvas-green: #44CF6E;
+        --color-canvas-blue: #53DFDD;
+        --color-canvas-purple: #A882FF;
     }
 }
