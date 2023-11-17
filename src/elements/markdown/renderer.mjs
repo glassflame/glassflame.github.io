@@ -1,5 +1,6 @@
 import { Marked } from "https://unpkg.com/marked@9.1.2/lib/marked.esm.js";
 import { CustomElement } from "../base.mjs";
+import {toTitleCase} from "../../utils/case.mjs";
 
 
 /**
@@ -31,10 +32,13 @@ export class MarkdownElement extends CustomElement {
                 }
             },
             blockquote(raw) {
-                console.log(raw)
                 const calloutMatch = raw.match(/^\[!(.+)]([-+])? ?([^\n]+)?(?:\n+(.*))?/)
                 if(calloutMatch) {
-                    const [, kind, collapse, admonition, contents] = calloutMatch
+                    const [, kind, collapse, rawAdmonition, rawContents] = calloutMatch
+                    const admonition = []
+                    const contents = []
+                    this.lexer.inlineTokens(rawAdmonition, admonition)
+                    this.lexer.blockTokens(rawContents, contents)
                     const result = {
                         type: "callout",
                         raw,
@@ -176,8 +180,14 @@ export class MarkdownElement extends CustomElement {
                 name: "callout",
                 level: "block",
                 renderer(token) {
-                    console.log(token)
-                    return `<x-callout kind="${token.kind}" collapse="${token.collapse}" admonition="${token.admonition}" contents="${token.contents}" cronus></x-callout>`
+                    let admonition = this.parser.parseInline(token.admonition)
+                    const contents = this.parser.parse(token.contents)
+
+                    if(admonition === "") {
+                        admonition = toTitleCase(token.kind)
+                    }
+
+                    return `<x-callout kind="${token.kind}" collapse="${token.collapse}"><span slot="callout-admonition">${admonition}</span><div slot="callout-contents">${contents}</div></x-callout>`
                 }
             }
         ],

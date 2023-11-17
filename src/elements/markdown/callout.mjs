@@ -1,10 +1,6 @@
 import {CustomElement} from "../base.mjs";
 
-export class CalloutElement extends CustomElement {
-    static get template() {
-        return document.getElementById("template-callout")
-    }
-
+export class CalloutElement extends HTMLElement {
     /**
      * The kind of callout this element represents, in UPPERCASE.
      *
@@ -45,76 +41,17 @@ export class CalloutElement extends CustomElement {
     }
 
     /**
-     * The title of this callout, in UPPERCASE, as casing is handled by CSS, or `undefined`, if the {@link kind} should be used.
-     *
-     * @return {string|undefined}
-     */
-    get admonition() {
-        return this.getAttribute("admonition")?.toUpperCase()
-    }
-    set admonition(value) {
-        if(value === undefined) {
-            this.removeAttribute("admonition")
-            return
-        }
-        this.setAttribute("admonition", value.toUpperCase())
-    }
-
-    /**
-     * The contents of this callout, or `undefined`, if there are none.
-     *
-     * @return {string}
-     */
-    get contents() {
-        const value = this.getAttribute("contents")
-        if(value === "undefined") {
-            return undefined
-        }
-        return value
-    }
-    set contents(value) {
-        if(value === undefined) {
-            this.removeAttribute("contents")
-            return
-        }
-        this.setAttribute("contents", value)
-    }
-
-    /**
-     * Whether this element should consume its parent {@link onConnect}.
-     * @return {boolean}
-     */
-    get cronus() {
-        return this.hasAttribute("cronus")
-    }
-    set cronus(value) {
-        if(value) {
-            this.setAttribute("cronus", "")
-        }
-        else {
-            this.removeAttribute("cronus")
-        }
-    }
-
-    /**
-     * Replace the contents of the {@link parentElement} with this element.
-     * Also sets {@link cronus} to `false`.
-     * @returns {void}
-     */
-    replaceParentElement() {
-            const grandpa = this.parentElement.parentElement
-            this.remove()
-            this.parentElement.remove()
-            this.cronus = false
-            grandpa.appendChild(this)
-    }
-
-    /**
      * The element displaying the admonition of this callout, or `null` if {@link admonition} is `undefined`.
      * Can be recreated with {@link recreateAdmonitionElement}.
      * @type {HTMLElement}
      */
     admonitionElement
+
+    /**
+     * The slot where the admonition of this callout will be inserted in.
+     * @type {HTMLSlotElement}
+     */
+    admonitionSlotElement
 
     /**
      * Recreate {@link collapseElement} with the current value of {@link collapse}.
@@ -125,42 +62,38 @@ export class CalloutElement extends CustomElement {
         if(this.admonitionElement) {
             this.admonitionElement.remove()
             this.admonitionElement = null
+            this.admonitionSlotElement = null
         }
 
-        this.admonitionElement = document.createElement("summary")
-        this.admonitionElement.innerText = this.admonition
+            this.admonitionElement = document.createElement("summary")
 
-        this.collapseElement.appendChild(this.admonitionElement)
+            this.admonitionSlotElement = document.createElement("slot")
+            this.admonitionSlotElement.name = "callout-admonition"
+            this.admonitionElement.appendChild(this.admonitionSlotElement)
+
+            this.collapseElement.appendChild(this.admonitionElement)
     }
 
     /**
-     * The element displaying the contents of this callout, or `null` if {@link contents} is `undefined`.
-     * Can be recreated with {@link recreateContentsElement}.
-     * @type {HTMLDivElement|null}
+     * The slot where the contents of this callout will be inserted in.
+     * @type {HTMLSlotElement}
      */
-    contentsElement
+    contentsSlotElement
 
     /**
-     * Recreate {@link contentsElement} with the current value of {@link contents} and {@link collapseElement} or {@link containerElement}.
+     * Recreate {@link contentsElement} with the current value of {@link contents} and {@link collapseElement}.
      * @returns {void}
      */
-    recreateContentsElement() {
-        if(this.contentsElement) {
-            this.contentsElement.remove()
+    recreateContentsSlotElement() {
+        if(this.contentsSlotElement) {
+            this.contentsSlotElement.remove()
             this.contentsElement = null
         }
 
-        if(this.contents) {
-            this.contentsElement = document.createElement("summary")
-            this.contentsElement.innerText = this.contents
+        this.contentsSlotElement = document.createElement("slot")
+        this.contentsSlotElement.name = "callout-contents"
 
-            if(this.collapseElement) {
-                this.collapseElement.appendChild(this.contentsElement)
-            }
-            else {
-                this.containerElement.appendChild(this.contentsElement)
-            }
-        }
+        this.collapseElement.appendChild(this.contentsSlotElement)
     }
 
     /**
@@ -178,51 +111,51 @@ export class CalloutElement extends CustomElement {
         if(this.collapseElement) {
             this.collapseElement.remove()
             this.collapseElement = null
+            this.admonitionElement = null
+            this.admonitionSlotElement = null
+            this.contentsElement = null
+            this.contentsSlotElement = null
         }
 
-        if(this.collapse !== undefined) {
-            this.collapseElement = document.createElement("details")
-            this.containerElement.appendChild(this.collapseElement)
-        }
-    }
-
-    /**
-     * The element containing this callout.
-     * Can be recreated with {@link recreateContainerElement}.
-     * @type {HTMLQuoteElement}
-     */
-    containerElement
-
-    /**
-     * The name of the slot where {@link containerElement} should be placed in.
-     * @type {string}
-     */
-    static CONTAINER_ELEMENT_SLOT = "callout-contents"
-
-    /**
-     * @returns {void}
-     */
-    recreateContainerElement() {
-        if(this.containerElement) {
-            this.containerElement.remove()
-            this.containerElement = null
-        }
-
-        this.containerElement = document.createElement("blockquote")
-        this.containerElement.slot = this.constructor.CONTAINER_ELEMENT_SLOT
-        this.appendChild(this.containerElement)
-    }
-
-    onConnect() {
-        super.onConnect()
-        if(this.cronus) {
-            this.replaceParentElement()
+        if(this.collapse === undefined) {
+            this.collapseElement = document.createElement("div")
         }
         else {
-            this.recreateContainerElement()
-            this.recreateCollapseElement()
-            this.recreateAdmonitionElement()
-            this.recreateContentsElement()
+            this.collapseElement = document.createElement("details")
+            if(this.collapse === "+") {
+                this.collapseElement.open = true
+            }
+            if(this.collapse === "-") {
+                this.collapseElement.open = false
+            }
         }
+
+        this.shadowRoot.appendChild(this.collapseElement)
+    }
+
+    /**
+     * Reset the style of the parent {@link HTMLQuoteElement}.
+     * @returns {void}
+     */
+    resetParentBlockquoteStyle() {
+        const parentClassList = this.parentElement.classList
+
+        for(const className in parentClassList.entries()) {
+            if(className.startsWith("callout")) {
+                parentClassList.remove(className)
+            }
+        }
+
+        parentClassList.add("callout")
+        parentClassList.add(`callout-${this.kind.toLowerCase()}`)
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    connectedCallback() {
+        this.attachShadow({ mode: "open" })
+        this.recreateCollapseElement()
+        this.recreateAdmonitionElement()
+        this.recreateContentsSlotElement()
+        this.resetParentBlockquoteStyle()
     }
 }

@@ -85,7 +85,7 @@ blockquote {
     margin-block-end: 0;
     margin-inline-start: 0;
     margin-inline-end: 0;
-    padding-left: 1.5ex;
+    padding-left: 12px;
 }
 
 .math {
@@ -128,53 +128,58 @@ h1 a:hover, .wikilink.wikilink-heading:hover {
 }
 
 .callout {
+    background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
 
+.callout [slot="callout-admonition"] {
+    color: var(--color-accent);
+    font-weight: bold;
 }
 
 .callout-abstract, .callout-summary, .callout-tldr {
-    --color-callout: var(--color-callout-cyan);
+    --color-accent: var(--color-callout-cyan);
 }
 
-.callout-info {
-    --color-callout: var(--color-callout-blue);
+.callout-info, .callout-note, .callout-default {
+    --color-accent: var(--color-callout-blue);
 }
 
 .callout-todo {
-    --color-callout: var(--color-callout-blue)
+    --color-accent: var(--color-callout-blue)
 }
 
 .callout-tip, .callout-hint, .callout-important {
-    --color-callout: var(--color-callout-cyan);
+    --color-accent: var(--color-callout-cyan);
 }
 
 .callout-success, .callout-check, .callout-done {
-    --color-callout: var(--color-callout-green);
+    --color-accent: var(--color-callout-green);
 }
 
 .callout-question, .callout-help, .callout-faq {
-    --color-callout: var(--color-callout-orange);
+    --color-accent: var(--color-callout-orange);
 }
 
 .callout-warning, .callout-caution, .callout-attention {
-    --color-callout: var(--color-callout-orange);
+    --color-accent: var(--color-callout-orange);
 }
 
 .callout-failure, .callout-fail, .callout-mission {
-    --color-callout: var(--color-callout-red);
+    --color-accent: var(--color-callout-red);
 }
 
 .callout-danger, .callout-error {
-    --color-callout: var(--color-callout-red);
+    --color-accent: var(--color-callout-red);
 }
 
 .callout-bug {
-    --color-callout: var(--color-callout-red);
+    --color-accent: var(--color-callout-red);
 }
 
 .callout-example {
-    --color-callout: var(--color-callout-purple);
+    --color-accent: var(--color-callout-purple);
 }
 
 .callout-quote, .callout-cite {
-    --color-callout: var(--color-callout-gray);
+    --color-accent: var(--color-callout-gray);
 }
