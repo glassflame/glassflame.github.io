@@ -1,5 +1,5 @@
 /**
- * Utilities to trasverse the DOM.
+ * Utilities to traverse the DOM.
  */
 
 /**

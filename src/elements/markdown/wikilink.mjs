@@ -1,5 +1,5 @@
 import { CustomElement } from "../base.mjs";
-import {findFirstAncestor} from "../../utils/trasversal.mjs";
+import {findFirstAncestor} from "../../utils/traversal.mjs";
 import {BrowseElement} from "../browse.mjs";
 import {VaultElement} from "../vault.mjs";
 import {filePath} from "../../utils/file.mjs";

@@ -1,6 +1,6 @@
 import { CanvasElement } from "../canvas.mjs";
 import { CanvasItemElement } from "../canvasitem.mjs";
-import { findFirstAncestor } from "../../../utils/trasversal.mjs";
+import { findFirstAncestor } from "../../../utils/traversal.mjs";
 
 
 /**

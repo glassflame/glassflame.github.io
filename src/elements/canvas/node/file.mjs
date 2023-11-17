@@ -1,7 +1,7 @@
 import { NodeElement } from "./base.mjs";
 import { DisplayElement } from "../../display.mjs";
 import { fileDetails } from "../../../utils/file.mjs";
-import {findFirstAncestor} from "../../../utils/trasversal.mjs";
+import {findFirstAncestor} from "../../../utils/traversal.mjs";
 import {VaultElement} from "../../vault.mjs";
 import {BrowseElement} from "../../browse.mjs";
 
