@@ -155,11 +155,12 @@ export class VaultElement extends CustomElement {
     fileIndex
 
     /**
-     * Update {@link fileIndex} by fetching the `steffo-file-index.json` file located at the root of the Vault.
+     * Update {@link fileIndex} by fetching the `file-index.json` file located at the root of the Vault.
+     * See <https://github.com/Steffo99/obsidian-file-index> for more details.
      * @returns {Promise<void>}
      */
-    async refetchSteffoFileIndex() {
-        const response = await this.fetchCooldown("steffo-file-index.json")
+    async refetchFileIndex() {
+        const response = await this.fetchCooldown("file-index.json")
         if(response.status >= 400) {
             this.fileIndex = null
             return
@@ -190,6 +191,6 @@ export class VaultElement extends CustomElement {
         this.recalculateVaultElement()
         this.#fetchQueueScheduler().then()
         await this.refetchAppearance()
-        await this.refetchSteffoFileIndex()
+        await this.refetchFileIndex()
     }
 }
