@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../glassfire.iml" filepath="$PROJECT_DIR$/../glassfire.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../glassflame.iml" filepath="$PROJECT_DIR$/../glassflame.iml" />
     </modules>
   </component>
 </project>
