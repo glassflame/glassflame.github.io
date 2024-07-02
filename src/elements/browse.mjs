@@ -111,7 +111,7 @@ export class BrowseElement extends HTMLBodyElement {
      * The name of this application, displayed if no page is being shown.
      * @type {string}
      */
-    static APP_NAME = "Obsiview"
+    static APP_NAME = "Glassflame"
 
     /**
      * Recreate {@link titleElement} with the current value of {@link path}.
