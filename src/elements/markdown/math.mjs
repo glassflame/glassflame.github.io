@@ -43,6 +43,12 @@ export class MathElement extends CustomElement {
     katexElement
 
     /**
+     * The group to use to store macros in.
+     * Should be overridden by the creator element.
+     */
+    katexGroup = {}
+
+    /**
      * The name of the slot where {@link katexElement} should be placed in.
      * @type {string}
      */
@@ -68,6 +74,8 @@ export class MathElement extends CustomElement {
             {
                 throwOnError: false,
                 globalGroup: true,
+                macros: this.katexGroup,
+                trust: true,
             }
         )
 

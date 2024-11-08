@@ -11,6 +11,11 @@ export class MarkdownElement extends CustomElement {
         return document.getElementById("template-markdown")
     }
 
+    /**
+     * The group to use to store KaTeX macros in for everything in this {@link MarkdownElement}.
+     */
+    katexGroup = {}
+
     // noinspection JSUnusedGlobalSymbols
     /**
      * {@link Marked} Markdown renderer.
@@ -226,6 +231,11 @@ export class MarkdownElement extends CustomElement {
         this.documentElement = document.createElement("div")
         this.documentElement.slot = this.constructor.DOCUMENT_ELEMENT_SLOT
         this.documentElement.innerHTML = this.constructor.MARKED.parse(this.markdownDocument)
+
+        for(const el of this.documentElement.getElementsByTagName("x-math")) {
+            el.katexGroup = this.katexGroup
+        }
+
         this.appendChild(this.documentElement)
     }
 
