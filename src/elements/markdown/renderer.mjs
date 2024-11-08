@@ -15,7 +15,7 @@ export class MarkdownElement extends CustomElement {
 
     /**
      * Element representing the Obsidian Vault.
-     * Can be recalculated with {@link recalculateAncestors}.
+     * Can be recalculated with {@link recalculateVault}.
      * @type {VaultElement}
      */
     vault
@@ -24,14 +24,9 @@ export class MarkdownElement extends CustomElement {
      * Recalculate the value of {@link browse} and {@link vault} using this element's current position in the DOM.
      * @returns {void}
      */
-    recalculateAncestors() {
+    recalculateVault() {
         this.vault = findFirstAncestor(this, VaultElement)
     }
-
-    /**
-     * The group to use to store KaTeX macros in for everything in this {@link MarkdownElement}.
-     */
-    katexGroup
 
     // noinspection JSUnusedGlobalSymbols
     /**
@@ -237,9 +232,41 @@ export class MarkdownElement extends CustomElement {
     static DOCUMENT_ELEMENT_SLOT = "markdown-document"
 
     /**
+     * Macros to be used in every single {@link MathElement} of the renderer.
+     */
+    katexMacros
+
+    /**
+     * Update {@link katexMacros} from the root {@link VaultElement}.
+     * @returns {Promise<void>}
+     */
+    async refetchKatexMacros() {
+        await this.vault.sleepUntilKatexMacrosAreAvailable()
+        this.katexMacros = {...this.vault.katexMacros}
+        this.#katexMacrosQueue.forEach(resolve => resolve(undefined))
+    }
+
+    /**
+     * Array of resolve {@link Promise} objects of tasks awaiting {@link sleepUntilKatexPreambleIsAvailable}.
+     * @type {((v: undefined) => void)[]}
+     */
+    #katexMacrosQueue = []
+
+    /**
+     * Await until {@link katexPreamble} becomes available.
+     * @returns {Promise<void>}
+     */
+    async sleepUntilKatexMacrosAreAvailable() {
+        if(this.katexMacros !== undefined) {
+            return
+        }
+        await new Promise(resolve => this.#katexMacrosQueue.push(resolve))
+    }
+
+    /**
      * Recreate {@link documentElement} using the current value of {@link markdownDocument}.
      */
-    async recreateDocumentElement() {
+    recreateDocumentElement() {
         if(this.documentElement) {
             this.documentElement.remove()
             this.documentElement = null
@@ -249,19 +276,13 @@ export class MarkdownElement extends CustomElement {
         this.documentElement.slot = this.constructor.DOCUMENT_ELEMENT_SLOT
         this.documentElement.innerHTML = this.constructor.MARKED.parse(this.markdownDocument)
 
-        // TODO: await this properly
-        await this.vault.sleepUntilKatexMacrosAreAvailable()
-        this.katexMacros = {...this.vault.katexMacros}
-        for(const el of this.documentElement.getElementsByTagName("x-math")) {
-            el.katexMacros = this.katexMacros
-        }
-
         this.appendChild(this.documentElement)
     }
 
     onConnect() {
         super.onConnect()
-        this.recalculateAncestors()
-        this.recreateDocumentElement().then()
+        this.recalculateVault()
+        this.recreateDocumentElement()
+        this.refetchKatexMacros().then()
     }
 }

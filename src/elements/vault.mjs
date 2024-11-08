@@ -231,12 +231,12 @@ export class VaultElement extends CustomElement {
         await new Promise(resolve => this.#katexMacrosQueue.push(resolve))
     }
 
-    async onConnect() {
+    onConnect() {
         super.onConnect()
         this.recalculateVaultElement()
         this.#fetchQueueScheduler().then()
-        await this.refetchAppearance()
-        await this.refetchFileIndex()
-        await this.refetchKatexMacros()
+        this.refetchAppearance().then()
+        this.refetchFileIndex().then()
+        this.refetchKatexMacros().then()
     }
 }

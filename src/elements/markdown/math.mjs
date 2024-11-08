@@ -1,5 +1,7 @@
 import {CustomElement} from "../base.mjs";
 import {default as katex} from 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs';
+import { MarkdownElement } from "./renderer.mjs";
+import { findFirstAncestor } from "../../utils/traversal.mjs";
 
 /**
  * Element rendering TeX math.
@@ -7,6 +9,21 @@ import {default as katex} from 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/k
 export class MathElement extends CustomElement {
     static get template() {
         return document.getElementById("template-math")
+    }
+
+    /**
+     * Element representing the Markdown context where this math formula is displayed in.
+     * Can be recalculated with {@link recalculateRenderer}.
+     * @type {MarkdownElement}
+     */
+    renderer
+
+    /**
+     * Recalculate the value of {@link browse} and {@link vault} using this element's current position in the DOM.
+     * @returns {void}
+     */
+    recalculateRenderer() {
+        this.renderer = findFirstAncestor(this, MarkdownElement)
     }
 
     /**
@@ -43,12 +60,6 @@ export class MathElement extends CustomElement {
     katexElement
 
     /**
-     * The group to use to store macros in.
-     * Should be overridden by the creator element.
-     */
-    katexMacros = {}
-
-    /**
      * The name of the slot where {@link katexElement} should be placed in.
      * @type {string}
      */
@@ -57,7 +68,7 @@ export class MathElement extends CustomElement {
     /**
      * Recreate {@link katexElement} with the current values of {@link texDocument} and {@link isBlock}.
      */
-    recreateKatexElement() {
+    async recreateKatexElement() {
         if(this.katexElement) {
             this.katexElement.remove()
             this.katexElement = null
@@ -68,13 +79,15 @@ export class MathElement extends CustomElement {
         this.katexElement.classList.add("math")
         this.katexElement.classList.add(this.isBlock ? "math-block" : "math-inline")
 
+        await this.renderer.sleepUntilKatexMacrosAreAvailable()
+
         katex.render(
             this.texDocument,
             this.katexElement,
             {
                 throwOnError: false,
                 globalGroup: true,
-                macros: this.katexMacros,
+                macros: this.renderer.katexMacros,
                 trust: true,
             }
         )
@@ -84,6 +97,7 @@ export class MathElement extends CustomElement {
 
     onConnect() {
         super.onConnect()
+        this.recalculateRenderer()
         this.recreateKatexElement()
     }
 }
