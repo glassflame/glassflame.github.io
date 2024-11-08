@@ -46,7 +46,7 @@ export class MathElement extends CustomElement {
      * The group to use to store macros in.
      * Should be overridden by the creator element.
      */
-    katexGroup = {}
+    katexMacros = {}
 
     /**
      * The name of the slot where {@link katexElement} should be placed in.
@@ -74,7 +74,7 @@ export class MathElement extends CustomElement {
             {
                 throwOnError: false,
                 globalGroup: true,
-                macros: this.katexGroup,
+                macros: this.katexMacros,
                 trust: true,
             }
         )
@@ -84,7 +84,6 @@ export class MathElement extends CustomElement {
 
     onConnect() {
         super.onConnect()
-
         this.recreateKatexElement()
     }
 }

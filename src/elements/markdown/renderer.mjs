@@ -1,6 +1,8 @@
 import { Marked } from "https://unpkg.com/marked@9.1.2/lib/marked.esm.js";
 import { CustomElement } from "../base.mjs";
 import {toTitleCase} from "../../utils/case.mjs";
+import {findFirstAncestor} from "../../utils/traversal.mjs";
+import {VaultElement} from "../vault.mjs";
 
 
 /**
@@ -12,9 +14,24 @@ export class MarkdownElement extends CustomElement {
     }
 
     /**
+     * Element representing the Obsidian Vault.
+     * Can be recalculated with {@link recalculateAncestors}.
+     * @type {VaultElement}
+     */
+    vault
+
+    /**
+     * Recalculate the value of {@link browse} and {@link vault} using this element's current position in the DOM.
+     * @returns {void}
+     */
+    recalculateAncestors() {
+        this.vault = findFirstAncestor(this, VaultElement)
+    }
+
+    /**
      * The group to use to store KaTeX macros in for everything in this {@link MarkdownElement}.
      */
-    katexGroup = {}
+    katexGroup
 
     // noinspection JSUnusedGlobalSymbols
     /**
@@ -222,7 +239,7 @@ export class MarkdownElement extends CustomElement {
     /**
      * Recreate {@link documentElement} using the current value of {@link markdownDocument}.
      */
-    recreateDocumentElement() {
+    async recreateDocumentElement() {
         if(this.documentElement) {
             this.documentElement.remove()
             this.documentElement = null
@@ -232,8 +249,11 @@ export class MarkdownElement extends CustomElement {
         this.documentElement.slot = this.constructor.DOCUMENT_ELEMENT_SLOT
         this.documentElement.innerHTML = this.constructor.MARKED.parse(this.markdownDocument)
 
+        // TODO: await this properly
+        await this.vault.sleepUntilKatexMacrosAreAvailable()
+        this.katexMacros = {...this.vault.katexMacros}
         for(const el of this.documentElement.getElementsByTagName("x-math")) {
-            el.katexGroup = this.katexGroup
+            el.katexMacros = this.katexMacros
         }
 
         this.appendChild(this.documentElement)
@@ -241,6 +261,7 @@ export class MarkdownElement extends CustomElement {
 
     onConnect() {
         super.onConnect()
-        this.recreateDocumentElement()
+        this.recalculateAncestors()
+        this.recreateDocumentElement().then()
     }
 }

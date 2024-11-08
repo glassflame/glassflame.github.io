@@ -1,5 +1,6 @@
 import { CustomElement } from "./base.mjs";
 import { sleep } from "../utils/sleep.mjs";
+import {default as katex} from 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.mjs';
 
 
 /**
@@ -186,11 +187,56 @@ export class VaultElement extends CustomElement {
         await new Promise(resolve => this.#fileIndexQueue.push(resolve))
     }
 
+    /**
+     * Macros to be used in every single {@link MathElement} of the vault.
+     */
+    katexMacros
+
+    /**
+     * Update {@link katexMacros} by fetching the `preamble.sty` file located at the root of the Vault, and then having KaTeX render it to a string, which is then discarded.
+     * @returns {Promise<void>}
+     */
+    async refetchKatexMacros() {
+        const response = await this.fetchCooldown("preamble.sty")
+        if(response.status >= 400) {
+            this.katexMacros = {}
+            this.#katexMacrosQueue.forEach(resolve => resolve(undefined))
+            return
+        }
+        const preamble = await response.text()
+        this.katexMacros = {}
+        katex.renderToString(preamble, {
+            throwOnError: false,
+            globalGroup: true,
+            macros: this.katexMacros,
+            trust: true,
+        })
+        this.#katexMacrosQueue.forEach(resolve => resolve(undefined))
+    }
+
+    /**
+     * Array of resolve {@link Promise} objects of tasks awaiting {@link sleepUntilKatexPreambleIsAvailable}.
+     * @type {((v: undefined) => void)[]}
+     */
+    #katexMacrosQueue = []
+
+    /**
+     * Await until {@link katexPreamble} becomes available.
+     * @returns {Promise<void>}
+     */
+    async sleepUntilKatexMacrosAreAvailable() {
+        if(this.katexMacros !== undefined) {
+            return
+        }
+        await new Promise(resolve => this.#katexMacrosQueue.push(resolve))
+    }
+
     async onConnect() {
         super.onConnect()
         this.recalculateVaultElement()
         this.#fetchQueueScheduler().then()
         await this.refetchAppearance()
         await this.refetchFileIndex()
+        await this.refetchKatexMacros()
     }
 }
