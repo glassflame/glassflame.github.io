@@ -102,6 +102,17 @@ th, td {
     border: 1px solid color-mix(in srgb, var(--color-foreground) 20%, transparent);
 }
 
+pre {
+    text-wrap: auto;
+}
+
+@media screen {
+    pre {
+        text-wrap: nowrap;
+        overflow-x: auto;
+    }
+}
+
 .math {
     overflow-x: auto;
     overflow-y: hidden;
