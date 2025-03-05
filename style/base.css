@@ -93,6 +93,15 @@ img {
     max-width: 100%;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 6px;
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 20%, transparent);
+}
+
 .math {
     overflow-x: auto;
     overflow-y: hidden;
