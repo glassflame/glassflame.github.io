@@ -64,11 +64,11 @@ body > h1 {
 
 * {
     box-sizing: border-box;
-    font-family: var(--font-text);
+    font-family: var(--font-text), sans-serif;
 }
 
 code {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
 }
 
 a {
