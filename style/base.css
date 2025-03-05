@@ -184,3 +184,13 @@ h1 a:hover, .wikilink.wikilink-heading:hover {
 .callout-quote, .callout-cite {
     --color-accent: var(--color-callout-gray);
 }
+
+.citation {
+    vertical-align: super;
+    font-size: x-small;
+}
+
+.citation::before {
+    counter-increment: citation-count;
+    content: "[" counter(citation-count) "]";
+}

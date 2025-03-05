@@ -69,6 +69,18 @@ export class MarkdownElement extends CustomElement {
                 return false
             }
         },
+        renderer: {
+            link(url, title, text) {
+                title = title ?? ""
+
+                if(text.startsWith("^")) {
+                    return `<a href="${url}" title="${title}" class="citation"></a>`
+                }
+                else {
+                    return `<a href="${url}" title="${title}">${text}</a>`
+                }
+            }
+        },
         extensions: [
             {
                 name: "frontmatter",
