@@ -23,7 +23,7 @@
     --color-callout-pink: #d53984;
     --color-callout: var(--color-callout-gray);
 
-    --margins: 0;
+    --margins: 8px;
 
     --node-group-border-width: 2px;
     --node-file-border-width: 2px;
