@@ -89,6 +89,10 @@ blockquote {
     padding-left: 12px;
 }
 
+img {
+    max-width: 100%;
+}
+
 .math {
     overflow-x: auto;
     overflow-y: hidden;

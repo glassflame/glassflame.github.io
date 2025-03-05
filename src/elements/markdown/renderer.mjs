@@ -125,6 +125,26 @@ export class MarkdownElement extends CustomElement {
                 }
             },
             {
+                name: "wikiimg",
+                level: "block",
+                start(src) {
+                    return src.match(/!\[\[/)?.index
+                },
+                tokenizer(src, _) {
+                    const match = src.match(/^!\[\[([^|\]]*)]]/)
+                    if(match) {
+                        return {
+                            type: "wikiimg",
+                            raw: match[0],
+                            target: match[1]
+                        }
+                    }
+                },
+                renderer(token) {
+                    return `<x-wikiimg target="${token.target}"></x-wikiimg>`
+                },
+            },
+            {
                 name: "wikilink",
                 level: "inline",
                 start(src) {

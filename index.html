@@ -84,7 +84,7 @@
 					Alternatively, browse an example vault, such as:
 				</p>
 				<ul>
-					<li><a href="?vault=https%3A%2F%2Fraw.githubusercontent.com%2FSteffo99%2Fappunti-universitari%2Fmain%2F&path=★ appunti magistrali.md" style="--color-accent: #D14224;">Steffo's University Notes</a></li>
+					<li><a href="?vault=https%3A%2F%2Fraw.githubusercontent.com%2FSteffo99%2Fappunti-universitari%2Frefs%2Fheads%2Fmain%2F&path=★ appunti magistrali.md" style="--color-accent: #D14224;">Steffo's University Notes</a></li>
 					<li><a href="?vault=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-help%2Fmaster%2Fen%2F&path=Home.md" style="--color-accent: #8A5CF5;">Obsidian's own documentation</a> (no wikilinks)</li>
 				</ul>
 				<h2>
@@ -246,6 +246,8 @@
 			<span class="hashtag"><slot name="hashtag-tag">{#Hashtag}</slot></span></template>
 		<template id="template-wikilink">
 			<slot name="wikilink-anchor">{Wikilink}</slot></template>
+		<template id="template-wikiimg">
+			<slot name="wikiimg-image">{WikiImg}</slot></template>
 		<template id="template-math">
 			<slot name="math-katex">{Math}</slot></template>
 	</head>

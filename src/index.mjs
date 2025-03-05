@@ -14,6 +14,7 @@ import {
     LandingElement,
     MathElement,
     CalloutElement,
+    WikiImgElement,
 } from "./elements/index.mjs";
 
 customElements.define("x-landing", LandingElement)
@@ -28,6 +29,7 @@ customElements.define("x-markdown", MarkdownElement)
 customElements.define("x-frontmatter", FrontMatterElement)
 customElements.define("x-hashtag", HashtagElement)
 customElements.define("x-wikilink", WikilinkElement)
+customElements.define("x-wikiimg", WikiImgElement)
 customElements.define("x-math", MathElement)
 customElements.define("x-callout", CalloutElement)
 customElements.define("x-browse", BrowseElement, {extends: "body"})
