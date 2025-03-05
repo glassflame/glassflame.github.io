@@ -97,9 +97,9 @@ table {
     border-collapse: collapse;
 }
 
-th, td {
+pre, th, td {
     padding: 6px;
-    border: 1px solid color-mix(in srgb, var(--color-foreground) 20%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--color-foreground) 30%, transparent);
 }
 
 pre {
