@@ -47,22 +47,23 @@
 }
 
 body {
-    margin: 0;
     width: max-content;
-    min-width: 100svw;
+    max-width: 100svw;
     height: max-content;
+
+    margin: 0;
+    padding: calc(var(--margins) / 2) var(--margins);
 
     background-color: var(--color-background);
     color: var(--color-foreground);
 }
 
 body > h1 {
-    margin-left: var(--margins);
-    margin-right: var(--margins);
     font-size: 4em;
 }
 
 * {
+    box-sizing: border-box;
     font-family: var(--font-text);
 }
 
